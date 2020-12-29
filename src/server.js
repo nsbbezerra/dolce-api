@@ -19,6 +19,10 @@ app.use(
   "/documentos",
   express.static(path.resolve(__dirname, "..", "uploads", "docs"))
 );
+app.use(
+  "/comprovantes",
+  express.static(path.resolve(__dirname, "..", "uploads", "receipt"))
+);
 
 const port = process.env.PORT || 3333;
 
