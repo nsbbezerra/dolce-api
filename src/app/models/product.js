@@ -72,6 +72,14 @@ const ProductSchema = new Schema(
       type: Number,
       required: true,
     },
+    promotional: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    promotionalValue: {
+      type: Number,
+    },
     margeLucro: Number,
     typeCalculate: {
       type: String,
