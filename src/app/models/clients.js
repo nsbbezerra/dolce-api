@@ -40,7 +40,7 @@ const ClientSchema = new Schema({
   save: {
     type: Date,
     required: true,
-    default: new Date(),
+    default: Date.now(),
   },
 });
 
