@@ -37,6 +37,11 @@ const ClientSchema = new Schema({
     type: String,
     require: true,
   },
+  save: {
+    type: Date,
+    required: true,
+    default: new Date(),
+  },
 });
 
 ClientSchema.pre("save", async function (next) {
