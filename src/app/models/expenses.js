@@ -3,17 +3,17 @@ const Schema = mongoose.Schema;
 
 const ExpenseSchema = new Schema({
   planContas: {
-    type: Schema.Types.ObjectId,
+    type: mongoose.Types.ObjectId,
     ref: "PlanAccount",
     required: true,
   },
   payForm: {
-    type: Schema.Types.ObjectId,
+    type: mongoose.Types.ObjectId,
     ref: "PayForm",
     required: true,
   },
   accountBank: {
-    type: Schema.Types.ObjectId,
+    type: mongoose.Types.ObjectId,
     ref: "BankAccount",
     required: true,
   },
