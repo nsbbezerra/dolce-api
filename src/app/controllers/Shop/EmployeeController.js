@@ -1,8 +1,8 @@
-const Employee = require("../models/employee");
+const Employee = require("../../models/employee");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const configs = require("../../configs/configs");
-const Blacklist = require("../models/blacklist");
+const configs = require("../../../configs/configs");
+const Blacklist = require("../../models/blacklist");
 
 module.exports = {
   async Store(req, res) {

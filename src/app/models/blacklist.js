@@ -7,11 +7,12 @@ const BlacklistSchema = new Schema({
   },
   createdAt: {
     type: Date,
-    expires: 86400,
     default: Date.now(),
     required: true,
   },
 });
+
+BlacklistSchema.index({ createdAt: 1 }, { expireAfterSeconds: 86400 });
 
 const Blacklist = mongoose.model("Blacklist", BlacklistSchema);
 

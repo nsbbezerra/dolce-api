@@ -7,9 +7,10 @@ const configs = require("../configs/configs");
 
 const Blacklist = require("../app/models/blacklist");
 
-const AddressesController = require("../app/controllers/AddressController");
-const BankAccountController = require("../app/controllers/BankAccountController");
-const EmployeeController = require("../app/controllers/EmployeeController");
+const AddressesController = require("../app/controllers/Shop/AddressController");
+const BankAccountController = require("../app/controllers/Shop/BankAccountController");
+const EmployeeController = require("../app/controllers/Shop/EmployeeController");
+const CashHandlingController = require("../app/controllers/Shop/CashHandlingController");
 
 async function verifyToken(req, res, next) {
   const token = req.headers["x-access-token"];
@@ -51,5 +52,11 @@ router.put("/employeepass/:id", verifyToken, EmployeeController.Password);
 router.put("/employeeact/:id", verifyToken, EmployeeController.Block);
 router.post("/employeeautenticate", EmployeeController.Autenticate);
 router.post("/employeelogout", EmployeeController.Logout);
+
+/** MOVIMENTAÇÃO DE CAIXA */
+router.post("/cashhandling", verifyToken, CashHandlingController.Stores);
+router.get("/cashhandling/:cashier", verifyToken, CashHandlingController.Index);
+router.put("/cashhandling/:id", verifyToken, CashHandlingController.Edit);
+router.delete("/cashhandling/:id", verifyToken, CashHandlingController.Remove);
 
 module.exports = router;

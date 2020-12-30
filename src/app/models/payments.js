@@ -19,6 +19,9 @@ const PaymentSchema = new Schema(
       ref: "BankAccount",
       required: true,
     },
+    cashier: {
+      type: String,
+    },
     order: {
       type: mongoose.Types.ObjectId,
       ref: "Order",

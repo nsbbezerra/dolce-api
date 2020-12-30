@@ -1,9 +1,9 @@
-const BankAccount = require("../models/bankAccount");
-const Employee = require("../models/employee");
+const Addresses = require("../../models/address");
+const Employee = require("../../models/employee");
 
 module.exports = {
   async Store(req, res) {
-    const { bank, value } = req.body;
+    const { client, street, number, comp, bairro, cep, city, state } = req.body;
     const auth = req.userId;
     try {
       const findAuth = await Employee.findOne({ _id: auth }).select(
@@ -14,22 +14,33 @@ module.exports = {
           .status(401)
           .json({ message: "Usuário sem permissão para esta ação" });
       }
-      await BankAccount.create({ bank, value });
-      const bankAccount = await BankAccount.find().sort({ bank: 1 });
-      return res.status(201).json({
-        message: "Conta Bancária cadastrada com sucesso",
-        bankAccount,
+      await Addresses.create({
+        client,
+        street,
+        number,
+        comp,
+        bairro,
+        cep,
+        city,
+        state,
       });
+      const addresses = await Addresses.find({ client: client }).sort({
+        createDate: 1,
+      });
+      return res
+        .status(201)
+        .json({ message: "Cadastro efetuado com sucesso", addresses });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
-        message: "Ocorreu um erro cadastrar a conta bancária",
+        message: "Ocorreu um erro ao efetuar o cadastro",
         errorMessage,
       });
     }
   },
 
-  async Show(req, res) {
+  async Index(req, res) {
+    const { id } = req.params;
     const auth = req.userId;
     try {
       const findAuth = await Employee.findOne({ _id: auth }).select(
@@ -40,12 +51,14 @@ module.exports = {
           .status(401)
           .json({ message: "Usuário sem permissão para esta ação" });
       }
-      const bankAccount = await BankAccount.find().sort({ bank: 1 });
-      return res.status(200).json(bankAccount);
+      const addresses = await Addresses.find({ client: id }).sort({
+        createDate: 1,
+      });
+      return res.status(200).json(addresses);
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
-        message: "Ocorreu um erro buscar as contas bancárias",
+        message: "Ocorreu um erro ao buscar os endereços",
         errorMessage,
       });
     }
@@ -53,7 +66,7 @@ module.exports = {
 
   async Edit(req, res) {
     const { id } = req.params;
-    const { bank, value } = req.body;
+    const { street, number, comp, bairro, cep, city, state } = req.body;
     const auth = req.userId;
     try {
       const findAuth = await Employee.findOne({ _id: auth }).select(
@@ -64,32 +77,27 @@ module.exports = {
           .status(401)
           .json({ message: "Usuário sem permissão para esta ação" });
       }
-      await BankAccount.findOneAndUpdate(
+      await Addresses.findOneAndUpdate(
         { _id: id },
-        {
-          $set: {
-            bank,
-            value,
-          },
-        }
+        { $set: { street, number, comp, bairro, cep, city, state } }
       );
-
-      const bankAccount = await BankAccount.find().sort({ bank: 1 });
-      return res.status(200).json({
-        message: "Conta Bancária atualizada com sucesso",
-        bankAccount,
+      const addresses = await Addresses.find({ client: id }).sort({
+        createDate: 1,
       });
+      return res
+        .status(201)
+        .json({ message: "Alteração efetuada com sucesso", addresses });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
-        message: "Ocorreu um erro editar a conta bancária",
+        message: "Ocorreu um erro ao editar o endereço",
         errorMessage,
       });
     }
   },
 
-  async Block(req, res) {
-    const { id, active } = req.body;
+  async Remove(res, req) {
+    const { id } = req.params;
     const auth = req.userId;
     try {
       const findAuth = await Employee.findOne({ _id: auth }).select(
@@ -100,15 +108,12 @@ module.exports = {
           .status(401)
           .json({ message: "Usuário sem permissão para esta ação" });
       }
-      await BankAccount.findOneAndUpdate({ _id: id }, { $set: { active } });
-      const bankAccount = await BankAccount.find().sort({ bank: 1 });
-      return res
-        .status(200)
-        .json({ message: "Alteração realizada com sucesso", bankAccount });
+      await Addresses.findOneAndDelete({ _id: id });
+      return res.status(200).json({ message: "Endereço excluído com sucesso" });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
-        message: "Ocorreu um erro excluir a conta bancária",
+        message: "Ocorreu um erro ao excluir o endereço",
         errorMessage,
       });
     }
