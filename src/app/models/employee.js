@@ -43,9 +43,18 @@ const EmployeeSchema = new Schema({
     required: true,
     default: true,
   },
-  token: String,
+  token: {
+    type: String,
+    select: false,
+  },
   tokenValidate: {
     type: Date,
+  },
+  premission: {
+    type: String,
+    required: true,
+    default: "shop",
+    select: false,
   },
 });
 

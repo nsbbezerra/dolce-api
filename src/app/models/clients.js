@@ -42,9 +42,23 @@ const ClientSchema = new Schema({
     required: true,
     default: Date.now(),
   },
-  token: String,
-  tokenValidate: {
+  token: {
+    type: String,
+    select: false,
+  },
+  passwordResetToken: {
+    type: String,
+    select: false,
+  },
+  passwordResetExpires: {
     type: Date,
+    select: false,
+  },
+  premission: {
+    type: String,
+    required: true,
+    default: "site",
+    select: false,
   },
 });
 
