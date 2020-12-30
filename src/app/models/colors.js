@@ -6,6 +6,7 @@ const ColorSchema = new Schema({
     type: mongoose.Types.ObjectId,
     ref: "Product",
   },
+  id: String,
   name: String,
   hexDecimal: String,
 });

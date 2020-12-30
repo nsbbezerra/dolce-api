@@ -8,6 +8,7 @@ const ProductSchema = new Schema(
       type: mongoose.Types.ObjectId,
       ref: "Category",
     },
+    id: String,
     name: String,
     description: String,
     sku: String,

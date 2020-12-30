@@ -35,6 +35,7 @@ const OrderSchema = new Schema(
         colorId: String,
         colorHexDecimal: String,
         size: String,
+        sizeId: String,
         amount: Number,
         unitaryValue: Number,
         totalValue: Number,

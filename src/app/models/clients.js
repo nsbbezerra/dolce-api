@@ -42,6 +42,10 @@ const ClientSchema = new Schema({
     required: true,
     default: Date.now(),
   },
+  token: String,
+  tokenValidate: {
+    type: Date,
+  },
 });
 
 ClientSchema.pre("save", async function (next) {

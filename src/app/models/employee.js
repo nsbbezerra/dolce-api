@@ -24,9 +24,6 @@ const EmployeeSchema = new Schema({
     type: Boolean,
     required: true,
   },
-  admission: {
-    type: String,
-  },
   comission: {
     type: Number,
   },
@@ -39,11 +36,16 @@ const EmployeeSchema = new Schema({
   },
   password: {
     type: String,
+    select: false,
   },
   active: {
     type: Boolean,
     required: true,
     default: true,
+  },
+  token: String,
+  tokenValidate: {
+    type: Date,
   },
 });
 

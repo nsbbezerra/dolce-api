@@ -6,6 +6,7 @@ const SizeSchema = new Schema({
     type: mongoose.Types.ObjectId,
     ref: "Product",
   },
+  id: String,
   color: {
     type: mongoose.Types.ObjectId,
     ref: "Color",
