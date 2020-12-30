@@ -92,6 +92,20 @@ const ProductSchema = new Schema(
       otherExpenses: Number,
     },
     thumbnail: String,
+    freight: {
+      codService: [
+        { code: { type: String, enum: ["04014", "04510", "40290"] } },
+      ],
+      weight: String,
+      width: Number,
+      height: Number,
+      diameter: Number,
+      length: Number,
+      format: {
+        type: Number,
+        enum: [1, 2, 3],
+      },
+    },
   },
   {
     toJSON: {

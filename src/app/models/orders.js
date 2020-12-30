@@ -69,6 +69,7 @@ const OrderSchema = new Schema(
       default: Date.now(),
     },
     orderFile: String,
+    tracking: String,
   },
   {
     toJSON: { virtuals: true },

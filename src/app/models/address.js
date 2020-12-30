@@ -38,6 +38,11 @@ const AddressSchema = new Schema({
   default: {
     type: Boolean,
   },
+  createDate: {
+    type: Date,
+    required: true,
+    default: Date.now(),
+  },
 });
 
 const addressSchema = mongoose.model("Address", AddressSchema);
