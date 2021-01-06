@@ -4,6 +4,10 @@ const configs = require("../../configs/configs");
 
 const ProductSchema = new Schema(
   {
+    department: {
+      type: mongoose.Types.ObjectId,
+      ref: "Department",
+    },
     category: {
       type: mongoose.Types.ObjectId,
       ref: "Category",
@@ -12,6 +16,7 @@ const ProductSchema = new Schema(
     name: String,
     description: String,
     sku: String,
+    barcode: String,
     rating: Number,
     active: {
       type: Boolean,
@@ -68,6 +73,9 @@ const ProductSchema = new Schema(
     costValue: {
       type: Number,
       required: true,
+    },
+    otherCost: {
+      type: Number,
     },
     saleValue: {
       type: Number,
