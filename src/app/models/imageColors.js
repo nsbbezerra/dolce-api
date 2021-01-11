@@ -12,6 +12,8 @@ const ImageColorSchema = new Schema(
       type: mongoose.Types.ObjectId,
       ref: "Color",
     },
+    hex: String,
+    nameColor: String,
     image: String,
     active: {
       type: Boolean,
