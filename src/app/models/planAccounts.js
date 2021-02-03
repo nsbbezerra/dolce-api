@@ -2,6 +2,10 @@ const mongoose = require("../../database/database");
 const Schema = mongoose.Schema;
 
 const PlanAccountSchema = new Schema({
+  identification: {
+    type: String,
+    required: true,
+  },
   planAccount: {
     type: String,
     required: true,
