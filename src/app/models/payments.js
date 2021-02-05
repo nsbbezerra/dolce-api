@@ -9,6 +9,11 @@ const PaymentSchema = new Schema(
       ref: "PlanAccount",
       required: true,
     },
+    client: {
+      type: mongoose.Types.ObjectId,
+      ref: "Clients",
+      required: true,
+    },
     payForm: {
       type: mongoose.Types.ObjectId,
       ref: "PayForm",
@@ -29,6 +34,12 @@ const PaymentSchema = new Schema(
     plots: Number,
     plotsValue: Number,
     valueTotal: Number,
+    interestTax: Number,
+    interestValue: Number,
+    interestInterval: {
+      type: String,
+      enum: ["day", "month", "year"],
+    },
     statusPay: {
       type: String,
       enum: ["wait", "processing", "approved", "refused", "cancel"],
