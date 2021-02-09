@@ -19,6 +19,7 @@ const PaymentSchema = new Schema(
       ref: "PayForm",
       required: true,
     },
+    name: String,
     accountBank: {
       type: mongoose.Types.ObjectId,
       ref: "BankAccount",

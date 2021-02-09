@@ -17,17 +17,19 @@ const OrderSchema = new Schema(
       enum: ["shop", "site"],
       required: true,
     },
-    payment: {
-      name: String,
-      payId: String,
-      plots: Number,
-      plotsValue: Number,
-      valueTotal: Number,
-      paymentStatus: {
-        type: String,
-        enum: ["wait", "processing", "approved", "refused", "cancel"],
+    payment: [
+      {
+        name: String,
+        payId: String,
+        plots: Number,
+        plotsValue: Number,
+        valueTotal: Number,
+        paymentStatus: {
+          type: String,
+          enum: ["wait", "processing", "approved", "refused", "cancel"],
+        },
       },
-    },
+    ],
     products: [
       {
         id: String,
