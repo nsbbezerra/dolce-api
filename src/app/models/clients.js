@@ -9,6 +9,8 @@ const ClientSchema = new Schema({
   },
   gender: {
     type: String,
+    enum: ["masc", "fem"],
+    required: true,
   },
   cpf: {
     type: String,
@@ -18,11 +20,18 @@ const ClientSchema = new Schema({
   email: {
     type: String,
   },
+  user: {
+    type: String,
+    required: true,
+  },
   password: {
     type: String,
     required: true,
   },
-  contact: String,
+  contact: {
+    type: String,
+    required: true,
+  },
   active: {
     type: Boolean,
     default: true,
@@ -34,10 +43,6 @@ const ClientSchema = new Schema({
     required: true,
   },
   createDate: {
-    type: String,
-    require: true,
-  },
-  save: {
     type: Date,
     required: true,
     default: Date.now(),

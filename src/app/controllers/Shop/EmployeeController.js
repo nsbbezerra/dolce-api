@@ -211,7 +211,12 @@ module.exports = {
         expiresIn: expire,
       });
       await Employee.findOneAndUpdate({ user: user }, { $set: { token } });
-      const data = { token: token, user: employee._id };
+      const permissions = {
+        admin: employee.admin,
+        sales: employee.sales,
+        cashier: employee.caixa,
+      };
+      const data = { token: token, user: employee._id, permissions };
       return res.status(200).json(data);
     } catch (error) {
       const errorMessage = error.message;

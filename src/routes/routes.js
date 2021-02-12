@@ -11,15 +11,11 @@ const AddressesController = require("../app/controllers/Shop/AddressController")
 const BankAccountController = require("../app/controllers/Shop/BankAccountController");
 const EmployeeController = require("../app/controllers/Shop/EmployeeController");
 const CashHandlingController = require("../app/controllers/Shop/CashHandlingController");
+const ClientControllerShop = require("../app/controllers/Shop/ClientsController");
 
 async function verifyToken(req, res, next) {
+  console.log("ENTROU NO TOKEN");
   const token = req.headers["x-access-token"];
-  const blacklist = await Blacklist.findOne({ token });
-  if (blacklist) {
-    return res
-      .status(401)
-      .json({ message: "Usuário sem autorização para esta ação" });
-  }
   await jwt.verify(token, configs.secret, (err, decoded) => {
     if (err) {
       return res
@@ -58,5 +54,8 @@ router.post("/cashhandling", verifyToken, CashHandlingController.Stores);
 router.get("/cashhandling/:cashier", verifyToken, CashHandlingController.Index);
 router.put("/cashhandling/:id", verifyToken, CashHandlingController.Edit);
 router.delete("/cashhandling/:id", verifyToken, CashHandlingController.Remove);
+
+/** CLIENTES */
+router.post("/clients", verifyToken, ClientControllerShop.Store);
 
 module.exports = router;
