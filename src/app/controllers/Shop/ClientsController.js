@@ -2,10 +2,25 @@ const Clientes = require("../../models/clients");
 
 module.exports = {
   async Store(req, res) {
-    console.log("RECEBEU");
-    const { name, gender, cpf, email, contact, user } = req.body;
-
+    const { name, gender, cpf, email, contact, user, password } = req.body;
     try {
+      const findClient = await Clientes.findOne({ cpf });
+      const findUser = await Clientes.findOne({ user });
+
+      if (findClient) {
+        return res.status(400).json({
+          message: "CPF já cadastrado",
+          errorMessage: "Cod: 400",
+        });
+      }
+
+      if (findUser) {
+        return res.status(400).json({
+          message: "Usuário já cadastrado",
+          errorMessage: "Cod: 400",
+        });
+      }
+
       const client = await Clientes.create({
         name,
         gender,
@@ -13,6 +28,7 @@ module.exports = {
         email,
         contact,
         user,
+        password,
       });
       return res
         .status(201)

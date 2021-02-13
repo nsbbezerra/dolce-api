@@ -5,8 +5,6 @@ const uploaderConfig = require("../configs/configUploader");
 const jwt = require("jsonwebtoken");
 const configs = require("../configs/configs");
 
-const Blacklist = require("../app/models/blacklist");
-
 const AddressesController = require("../app/controllers/Shop/AddressController");
 const BankAccountController = require("../app/controllers/Shop/BankAccountController");
 const EmployeeController = require("../app/controllers/Shop/EmployeeController");
@@ -14,7 +12,6 @@ const CashHandlingController = require("../app/controllers/Shop/CashHandlingCont
 const ClientControllerShop = require("../app/controllers/Shop/ClientsController");
 
 async function verifyToken(req, res, next) {
-  console.log("ENTROU NO TOKEN");
   const token = req.headers["x-access-token"];
   await jwt.verify(token, configs.secret, (err, decoded) => {
     if (err) {
