@@ -54,5 +54,6 @@ router.delete("/cashhandling/:id", verifyToken, CashHandlingController.Remove);
 
 /** CLIENTES */
 router.post("/clients", verifyToken, ClientControllerShop.Store);
+router.get("/clients", ClientControllerShop.Show);
 
 module.exports = router;

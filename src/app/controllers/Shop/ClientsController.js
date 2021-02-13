@@ -41,4 +41,17 @@ module.exports = {
       });
     }
   },
+
+  async Show(req, res) {
+    try {
+      const clients = await Clientes.find();
+      return res.status(201).json(clients);
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao buscar os clientes",
+        errorMessage,
+      });
+    }
+  },
 };
