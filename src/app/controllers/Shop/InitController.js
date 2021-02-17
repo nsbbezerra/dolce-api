@@ -1,34 +1,30 @@
-const Employee = require("../../models/employee");
-const Validator = require("../../models/validator");
+const knex = require("../../../database/pg");
+const bcrypt = require("bcrypt");
+const config = require("../../../configs/configs");
 
 module.exports = {
   async InitialController() {
-    const validator = await Validator.find();
-
+    const validator = await knex.select().table("employees");
+    const hash = await bcrypt.hash(config.userPass, 10);
     try {
       if (!validator.length) {
-        const employee = await Employee.create({
-          name: "Admin",
+        const novo = await knex("employees").insert({
+          name: "admin",
           gender: "masc",
+          contact: "(00) 00000-0000",
+          user: "admin",
+          password: hash,
           admin: true,
           sales: false,
           caixa: false,
+          comission: 0.0,
           comissioned: false,
-          user: "admin",
-          password: "admin",
-          premission: "shop",
         });
-
-        await Validator.create({ initiate: true });
-        console.log(employee);
+        console.log(novo);
+      } else {
+        console.log("Saiu");
       }
-      console.log("Cadastrado");
     } catch (error) {
-      const errorMessage = error.message;
-      return res.status(400).json({
-        message: "Ocorreu uma falha ao iniciar",
-        errorMessage,
-      });
       console.log(error);
     }
   },

@@ -1,11 +1,10 @@
-const Employee = require("../../models/employee");
+const knex = require("../../../database/pg");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const configs = require("../../../configs/configs");
-const Blacklist = require("../../models/blacklist");
 
 module.exports = {
-  async Store(req, res) {
+  async Store(req, res, next) {
     const {
       name,
       gender,
@@ -19,23 +18,25 @@ module.exports = {
       password,
     } = req.body;
     const auth = req.userId;
+    const hash = await bcrypt.hash(password, 10);
     try {
-      const findAuth = await Employee.findOne({ _id: auth }).select(
-        "+premission"
-      );
+      const findAuth = await knex("employees")
+        .where({ id: auth })
+        .select("premission")
+        .first();
 
       if (!findAuth || findAuth.premission !== "shop") {
         return res
           .status(401)
           .json({ message: "Usuário sem permissão para esta ação" });
       }
-      const userFind = await Employee.findOne({ user: user });
+      const userFind = await knex("employees").where({ user: user }).first();
       if (userFind) {
         return res
           .status(400)
           .json({ message: "Este nome de usuário já existe" });
       }
-      await Employee.create({
+      await knex("employees").insert({
         name,
         gender,
         contact,
@@ -45,12 +46,11 @@ module.exports = {
         comission,
         comissioned,
         user,
-        password,
+        password: hash,
       });
-      const employers = await Employee.find().sort({ name: 1 });
       return res
         .status(201)
-        .json({ message: "Colaborador cadastrado com sucesso", employers });
+        .json({ message: "Colaborador cadastrado com sucesso" });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
@@ -194,9 +194,11 @@ module.exports = {
   async Autenticate(req, res) {
     const { user, password } = req.body;
     try {
-      const employee = await Employee.findOne({ user: user }).select(
-        "+password"
-      );
+      const employee = await knex("employees")
+        .where({ user: user })
+        .select("id", "password", "name", "active", "admin", "sales", "caixa")
+        .first();
+
       if (!employee) {
         return res.status(400).json({ message: "Colaborador não encontrado" });
       }
@@ -207,16 +209,15 @@ module.exports = {
         return res.status(400).json({ message: "Colaborador não autorizado" });
       }
       const expire = 36000; //10 horas em segundos
-      const token = jwt.sign({ userId: employee._id }, configs.secret, {
+      const token = jwt.sign({ userId: employee.id }, configs.secret, {
         expiresIn: expire,
       });
-      await Employee.findOneAndUpdate({ user: user }, { $set: { token } });
       const permissions = {
         admin: employee.admin,
         sales: employee.sales,
         cashier: employee.caixa,
       };
-      const data = { token: token, user: employee._id, permissions };
+      const data = { token: token, user: employee.id, permissions };
       return res.status(200).json(data);
     } catch (error) {
       const errorMessage = error.message;

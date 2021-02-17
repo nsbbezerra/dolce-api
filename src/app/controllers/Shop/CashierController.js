@@ -1,7 +1,7 @@
-const Cashier = require("../../models/cashier");
-const Employee = require("../../models/employee");
-const CashHandling = require("../../models/cashHandling");
-const Payments = require("../../models/payments");
+//const Cashier = require("../../models/cashier");
+//const Employee = require("../../models/employee");
+//const CashHandling = require("../../models/cashHandling");
+//const Payments = require("../../models/payments");
 
 const meses = new Array(
   "Janeiro",

@@ -1,21 +1,22 @@
-const Addresses = require("../../models/address");
-const Employee = require("../../models/employee");
+const knex = require("../../../database/pg");
 
 module.exports = {
   async Store(req, res) {
     const { client, street, number, comp, bairro, cep, city, state } = req.body;
     const auth = req.userId;
     try {
-      const findAuth = await Employee.findOne({ _id: auth }).select(
-        "+premission"
-      );
+      const findAuth = await knex("employees")
+        .where({ id: auth })
+        .select("premission")
+        .first();
+
       if (!findAuth || findAuth.premission !== "shop") {
         return res
           .status(401)
           .json({ message: "Usuário sem permissão para esta ação" });
       }
-      await Addresses.create({
-        client,
+      await knex("addresses").insert({
+        client_id: client,
         street,
         number,
         comp,
@@ -24,12 +25,7 @@ module.exports = {
         city,
         state,
       });
-      const addresses = await Addresses.find({ client: client }).sort({
-        createDate: 1,
-      });
-      return res
-        .status(201)
-        .json({ message: "Cadastro efetuado com sucesso", addresses });
+      return res.status(201).json({ message: "Cadastro efetuado com sucesso" });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
