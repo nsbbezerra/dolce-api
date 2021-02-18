@@ -11,6 +11,33 @@ const azureDepartmentStorage = new MulterAzureStorage({
   urlExpirationTime: 60,
 });
 
+const azureCategoriesStorage = new MulterAzureStorage({
+  connectionString: process.env.AZURE_CONNECTION,
+  accessKey: process.env.AZURE_KEY,
+  accountName: process.env.AZURE_ACCOUNT_NAME,
+  containerName: "categories",
+  containerAccessLevel: "blob",
+  urlExpirationTime: 60,
+});
+
+const azureProductsStorage = new MulterAzureStorage({
+  connectionString: process.env.AZURE_CONNECTION,
+  accessKey: process.env.AZURE_KEY,
+  accountName: process.env.AZURE_ACCOUNT_NAME,
+  containerName: "products",
+  containerAccessLevel: "blob",
+  urlExpirationTime: 60,
+});
+
+const azureColorsStorage = new MulterAzureStorage({
+  connectionString: process.env.AZURE_CONNECTION,
+  accessKey: process.env.AZURE_KEY,
+  accountName: process.env.AZURE_ACCOUNT_NAME,
+  containerName: "colors",
+  containerAccessLevel: "blob",
+  urlExpirationTime: 60,
+});
+
 module.exports = {
   storageImg: multer.diskStorage({
     destination: path.resolve(__dirname, "..", "..", "uploads", "img"),
@@ -43,4 +70,7 @@ module.exports = {
     },
   }),
   azureDepartmentsImage: multer({ storage: azureDepartmentStorage }),
+  azureCategoriesImage: multer({ storage: azureCategoriesStorage }),
+  azureProductsImage: multer({ storage: azureProductsStorage }),
+  azureColorsImage: multer({ storage: azureColorsStorage }),
 };

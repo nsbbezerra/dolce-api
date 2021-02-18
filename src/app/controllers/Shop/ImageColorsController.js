@@ -2,21 +2,20 @@ const knex = require("../../../database/pg");
 
 module.exports = {
   async Store(req, res) {
-    const { name, description } = req.body;
+    const { product, color, name, hex } = req.body;
     const { url } = req.file;
     try {
-      await knex("departments").insert({
+      await knex("colorsImages").insert({
+        products_id: product,
+        colors_id: color,
         name,
-        description,
-        thumbnail: url,
+        hex,
+        image: url,
       });
-      return res
-        .status(201)
-        .json({ message: "Departamento cadastrado com sucesso" });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
-        message: "Ocorreu um erro ao cadastrar o departamento",
+        message: "Ocorreu um erro ao efetuar o cadastro",
         errorMessage,
       });
     }
@@ -24,12 +23,12 @@ module.exports = {
 
   async Show(req, res) {
     try {
-      const departments = await knex.select("*").table("departments");
-      return res.status(201).json(departments);
+      const images = await knex.select("*").table("colorsImages");
+      return res.status(201).json(images);
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
-        message: "Ocorreu um erro ao buscar os departamentos",
+        message: "Ocorreu um erro ao buscar as informações",
         errorMessage,
       });
     }

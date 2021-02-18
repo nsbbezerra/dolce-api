@@ -2,17 +2,16 @@ const knex = require("../../../database/pg");
 
 module.exports = {
   async Store(req, res) {
-    const { name, description } = req.body;
+    const { name, description, department } = req.body;
     const { url } = req.file;
     try {
-      await knex("departments").insert({
+      await knex("categories").insert({
         name,
+        departments_id: department,
         description,
         thumbnail: url,
       });
-      return res
-        .status(201)
-        .json({ message: "Departamento cadastrado com sucesso" });
+      return res.status(201).json({ message: "Cadastro efetuado com sucesso" });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
@@ -24,12 +23,12 @@ module.exports = {
 
   async Show(req, res) {
     try {
-      const departments = await knex.select("*").table("departments");
-      return res.status(201).json(departments);
+      const categories = await knex.select("*").table("categories");
+      return res.status(201).json(categories);
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
-        message: "Ocorreu um erro ao buscar os departamentos",
+        message: "Ocorreu um erro ao cadastrar o departamento",
         errorMessage,
       });
     }

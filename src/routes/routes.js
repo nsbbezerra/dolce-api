@@ -11,6 +11,11 @@ const EmployeeController = require("../app/controllers/Shop/EmployeeController")
 const CashHandlingController = require("../app/controllers/Shop/CashHandlingController");
 const ClientControllerShop = require("../app/controllers/Shop/ClientsController");
 const DepartmentsControllerShop = require("../app/controllers/Shop/DepartmentsController");
+const CategoriesControllerShop = require("../app/controllers/Shop/CategoriesController");
+const ProductControllerShop = require("../app/controllers/Shop/ProductsController");
+const ColorsControllerShop = require("../app/controllers/Shop/ColorsController");
+const SizesControllerShop = require("../app/controllers/Shop/SizesController");
+const ImageColorsController = require("../app/controllers/Shop/ImageColorsController");
 
 async function verifyToken(req, res, next) {
   const token = req.headers["x-access-token"];
@@ -63,6 +68,43 @@ router.post(
   multer(uploaderConfig.azureDepartmentsImage).single("thumbnail"),
   verifyToken,
   DepartmentsControllerShop.Store
+);
+router.get("/departments", DepartmentsControllerShop.Show);
+
+/** CATEGORIAS SHOP */
+router.post(
+  "/categories",
+  multer(uploaderConfig.azureCategoriesImage).single("thumbnail"),
+  verifyToken,
+  CategoriesControllerShop.Store
+);
+router.get("/categories", CategoriesControllerShop.Show);
+
+/** PRODUCTS SHOP */
+router.get("/products", ProductControllerShop.Show);
+router.get("/findDependents", ProductControllerShop.FindAllDependets);
+router.post(
+  "/products",
+  multer(uploaderConfig.azureProductsImage).single("thumbnail"),
+  verifyToken,
+  ProductControllerShop.Store
+);
+
+/** COLORS SHOP */
+router.get("/colors", ColorsControllerShop.Show);
+router.post("/colors", verifyToken, ColorsControllerShop.Store);
+
+/** SIZES SHOP */
+router.get("/sizes", SizesControllerShop.Show);
+router.post("/sizes", verifyToken, SizesControllerShop.Store);
+
+/** IMAGES COLORS SHOP */
+router.get("/imageColors", ImageColorsController.Show);
+router.post(
+  "/imageColors",
+  multer(uploaderConfig.azureColorsImage).single("image"),
+  verifyToken,
+  ImageColorsController.Store
 );
 
 module.exports = router;
