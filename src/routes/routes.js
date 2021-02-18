@@ -10,6 +10,7 @@ const BankAccountController = require("../app/controllers/Shop/BankAccountContro
 const EmployeeController = require("../app/controllers/Shop/EmployeeController");
 const CashHandlingController = require("../app/controllers/Shop/CashHandlingController");
 const ClientControllerShop = require("../app/controllers/Shop/ClientsController");
+const DepartmentsControllerShop = require("../app/controllers/Shop/DepartmentsController");
 
 async function verifyToken(req, res, next) {
   const token = req.headers["x-access-token"];
@@ -52,8 +53,16 @@ router.get("/cashhandling/:cashier", verifyToken, CashHandlingController.Index);
 router.put("/cashhandling/:id", verifyToken, CashHandlingController.Edit);
 router.delete("/cashhandling/:id", verifyToken, CashHandlingController.Remove);
 
-/** CLIENTES */
+/** CLIENTES SHOP */
 router.post("/clients", verifyToken, ClientControllerShop.Store);
 router.get("/clients", ClientControllerShop.Show);
+
+/** DEPARTAMENTOS SHOP */
+router.post(
+  "/departments",
+  multer(uploaderConfig.azureDepartmentsImage).single("thumbnail"),
+  verifyToken,
+  DepartmentsControllerShop.Store
+);
 
 module.exports = router;
