@@ -3,8 +3,8 @@ const knex = require("../../../database/pg");
 module.exports = {
   async Store(req, res) {
     const {
-      department,
-      categorie,
+      departments_id,
+      categories_id,
       name,
       description,
       sku,
@@ -39,11 +39,12 @@ module.exports = {
       freight_length,
       freight_format,
     } = req.body;
+    const { url } = req.file;
 
     try {
       await knex("products").insert({
-        departments_id: department,
-        categories_id: categorie,
+        departments_id,
+        categories_id,
         name,
         description,
         sku,
@@ -77,6 +78,7 @@ module.exports = {
         freight_diameter,
         freight_length,
         freight_format,
+        thumbnail: url,
       });
       return res
         .status(201)
