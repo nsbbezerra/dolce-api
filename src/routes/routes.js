@@ -93,6 +93,7 @@ router.post(
 /** COLORS SHOP */
 router.get("/colors", ColorsControllerShop.Show);
 router.post("/colors", verifyToken, ColorsControllerShop.Store);
+router.get("/colorsGet/:id", ColorsControllerShop.Find);
 router.put("/colors/:id", verifyToken, ColorsControllerShop.Update);
 router.delete("/colors/:id", verifyToken, ColorsControllerShop.Remove);
 router.get("/colorDependents", ColorsControllerShop.FindProducts);

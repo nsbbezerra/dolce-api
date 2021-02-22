@@ -10,7 +10,6 @@ module.exports = {
         name,
         hex,
       });
-      table.string("name").notNullable();
       const colors = await knex("colors")
         .where({ products_id: product })
         .select("name", "hex");
@@ -65,6 +64,23 @@ module.exports = {
     try {
       await knex("colors").where({ id: id }).del();
       return res.status(200).json({ message: "Cor removida com sucesso" });
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao remover as informações",
+        errorMessage,
+      });
+    }
+  },
+
+  async Find(req, res) {
+    const { id } = req.params;
+
+    try {
+      const colors = await knex("colors")
+        .where({ products_id: id })
+        .select("name", "hex", "id");
+      return res.status(201).json(colors);
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
