@@ -114,5 +114,8 @@ router.post(
   verifyToken,
   ImageColorsController.Store
 );
+router.get("/imagesDependets/:product", ImageColorsController.FindDependents);
+router.delete("/imageColors/:id", verifyToken, ImageColorsController.Remove);
+router.get("/findImages/:color", ImageColorsController.Find);
 
 module.exports = router;

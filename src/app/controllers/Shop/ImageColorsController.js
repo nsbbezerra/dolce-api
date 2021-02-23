@@ -12,6 +12,7 @@ module.exports = {
         hex,
         image: url,
       });
+      return res.status(201).json({ message: "Imagem cadastrada com suceso" });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
@@ -29,6 +30,58 @@ module.exports = {
       const errorMessage = error.message;
       return res.status(400).json({
         message: "Ocorreu um erro ao buscar as informações",
+        errorMessage,
+      });
+    }
+  },
+
+  async Find(req, res) {
+    const { color } = req.params;
+    try {
+      const sizes = await knex
+        .select("*")
+        .from("colors")
+        .join("colorsImages", function () {
+          this.on("colors.id", "=", "colorsImages.colors_id").onIn(
+            "colorsImages.products_id",
+            color
+          );
+        });
+      return res.status(201).json(sizes);
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao buscar as informações",
+        errorMessage,
+      });
+    }
+  },
+
+  async FindDependents(req, res) {
+    const { product } = req.params;
+    try {
+      const colors = await knex("colors")
+        .select("*")
+        .where({ products_id: product });
+      return res.status(201).json(colors);
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao editar as informações",
+        errorMessage,
+      });
+    }
+  },
+
+  async Remove(req, res) {
+    const { id } = req.params;
+    try {
+      await knex("colorsImages").where({ id: id }).del();
+      return res.status(201).json({ message: "Excluído com sucesso" });
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao excluir as informações",
         errorMessage,
       });
     }
