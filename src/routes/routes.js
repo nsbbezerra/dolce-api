@@ -101,6 +101,10 @@ router.get("/colorDependents", ColorsControllerShop.FindProducts);
 /** SIZES SHOP */
 router.get("/sizes", SizesControllerShop.Show);
 router.post("/sizes", verifyToken, SizesControllerShop.Store);
+router.put("/sizes/:id", verifyToken, SizesControllerShop.Update);
+router.delete("/sizes/:id", verifyToken, SizesControllerShop.Remove);
+router.get("/sizeDependets/:product", SizesControllerShop.FindDependents);
+router.get("/findSize/:color", SizesControllerShop.Find);
 
 /** IMAGES COLORS SHOP */
 router.get("/imageColors", ImageColorsController.Show);
