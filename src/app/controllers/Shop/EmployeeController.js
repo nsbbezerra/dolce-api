@@ -217,7 +217,12 @@ module.exports = {
         sales: employee.sales,
         cashier: employee.caixa,
       };
-      const data = { token: token, user: employee.id, permissions };
+      const data = {
+        token: token,
+        user: employee.id,
+        permissions,
+        name: employee.name,
+      };
       return res.status(200).json(data);
     } catch (error) {
       const errorMessage = error.message;

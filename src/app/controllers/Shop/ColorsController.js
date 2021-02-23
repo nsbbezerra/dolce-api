@@ -12,7 +12,7 @@ module.exports = {
       });
       const colors = await knex("colors")
         .where({ products_id: product })
-        .select("name", "hex");
+        .select("name", "hex", "id");
       return res
         .status(201)
         .json({ message: "Cadastro efetuado com sucesso", colors });
