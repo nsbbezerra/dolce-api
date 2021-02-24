@@ -1,9 +1,11 @@
 const knex = require("../../../database/pg");
+const config = require("../../../configs/configs");
 
 module.exports = {
   async Store(req, res) {
     const { product, color, name, hex } = req.body;
-    const { url } = req.file;
+    const { blobName } = req.file;
+    const url = `${config.blobColors}${blobName}`;
     try {
       await knex("colorsImages").insert({
         products_id: product,

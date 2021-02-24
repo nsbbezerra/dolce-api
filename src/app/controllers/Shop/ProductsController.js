@@ -1,3 +1,4 @@
+const configs = require("../../../configs/configs");
 const knex = require("../../../database/pg");
 
 module.exports = {
@@ -39,8 +40,8 @@ module.exports = {
       freight_length,
       freight_format,
     } = req.body;
-    const { url } = req.file;
-
+    const { blobName } = req.file;
+    const url = `${configs.blobProducts}${blobName}`;
     try {
       await knex("products").insert({
         departments_id,
