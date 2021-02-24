@@ -16,6 +16,7 @@ const ProductControllerShop = require("../app/controllers/Shop/ProductsControlle
 const ColorsControllerShop = require("../app/controllers/Shop/ColorsController");
 const SizesControllerShop = require("../app/controllers/Shop/SizesController");
 const ImageColorsController = require("../app/controllers/Shop/ImageColorsController");
+const DetailsControllerShop = require("../app/controllers/Shop/DetailsControllerShop");
 
 async function verifyToken(req, res, next) {
   const token = req.headers["x-access-token"];
@@ -117,5 +118,11 @@ router.post(
 router.get("/imagesDependets/:product", ImageColorsController.FindDependents);
 router.delete("/imageColors/:id", verifyToken, ImageColorsController.Remove);
 router.get("/findImages/:color", ImageColorsController.Find);
+
+/** DETALHES DO PRODUTO SHOP */
+router.get("/details/:product", DetailsControllerShop.Find);
+router.post("/details", verifyToken, DetailsControllerShop.Store);
+router.put("/details/:id", verifyToken, DetailsControllerShop.Update);
+router.delete("/details/:id", verifyToken, DetailsControllerShop.Remove);
 
 module.exports = router;
