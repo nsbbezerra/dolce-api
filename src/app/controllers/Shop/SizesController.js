@@ -45,7 +45,8 @@ module.exports = {
             "sizes.products_id",
             color
           );
-        });
+        })
+        .orderBy("size");
       return res.status(201).json(sizes);
     } catch (error) {
       const errorMessage = error.message;

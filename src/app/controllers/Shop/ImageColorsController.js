@@ -48,7 +48,8 @@ module.exports = {
             "colorsImages.products_id",
             color
           );
-        });
+        })
+        .orderBy("colors_id");
       return res.status(201).json(sizes);
     } catch (error) {
       const errorMessage = error.message;
