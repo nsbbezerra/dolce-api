@@ -72,6 +72,12 @@ router.post(
   DepartmentsControllerShop.Store
 );
 router.get("/departments", DepartmentsControllerShop.Show);
+router.put(
+  "/departmentsChangeImage/:id",
+  multer(uploaderConfig.azureDepartmentsImage).single("thumbnail"),
+  verifyToken,
+  DepartmentsControllerShop.UpdateImage
+);
 
 /** CATEGORIAS SHOP */
 router.post(
@@ -81,6 +87,12 @@ router.post(
   CategoriesControllerShop.Store
 );
 router.get("/categories", CategoriesControllerShop.Show);
+router.put(
+  "/categoryChangeImage/:id",
+  multer(uploaderConfig.azureCategoriesImage).single("thumbnail"),
+  verifyToken,
+  CategoriesControllerShop.UpdateImage
+);
 
 /** PRODUCTS SHOP */
 router.get("/products", ProductControllerShop.Show);
@@ -90,6 +102,12 @@ router.post(
   multer(uploaderConfig.azureProductsImage).single("thumbnail"),
   verifyToken,
   ProductControllerShop.Store
+);
+router.put(
+  "/productChangeImage/:id",
+  multer(uploaderConfig.azureProductsImage).single("thumbnail"),
+  verifyToken,
+  ProductControllerShop.UpdateImage
 );
 
 /** COLORS SHOP */

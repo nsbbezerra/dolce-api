@@ -8,7 +8,7 @@ module.exports = {
     const hash = await bcrypt.hash(config.userPass, 10);
     try {
       if (!validator.length) {
-        const novo = await knex("employees").insert({
+        await knex("employees").insert({
           name: "admin",
           gender: "masc",
           contact: "(00) 00000-0000",
@@ -20,7 +20,7 @@ module.exports = {
           comission: 0.0,
           comissioned: false,
         });
-        console.log(novo);
+        console.log("Criado");
       } else {
         console.log("Saiu");
       }
