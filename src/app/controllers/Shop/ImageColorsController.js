@@ -13,6 +13,7 @@ module.exports = {
         name,
         hex,
         image: url,
+        blobName,
       });
       return res.status(201).json({ message: "Imagem cadastrada com suceso" });
     } catch (error) {

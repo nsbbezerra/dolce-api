@@ -45,6 +45,7 @@ exports.up = function (knex) {
     table.boolean("promotional").notNullable().defaultTo(false);
     table.decimal("promotional_value", 8, 2);
     table.string("thumbnail");
+    table.string("blobName");
     table.enu("code_freight", ["04014", "04510", "40290"]);
     table.decimal("freight_weight", 5, 2);
     table.decimal("freight_width", 5, 2);

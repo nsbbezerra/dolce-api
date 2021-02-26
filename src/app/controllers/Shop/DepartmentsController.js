@@ -11,6 +11,7 @@ module.exports = {
         name,
         description,
         thumbnail: url,
+        blobName,
       });
       return res
         .status(201)

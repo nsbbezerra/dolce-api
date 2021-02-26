@@ -80,6 +80,7 @@ module.exports = {
         freight_length,
         freight_format,
         thumbnail: url,
+        blobName,
       });
       return res
         .status(201)

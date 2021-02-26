@@ -8,6 +8,7 @@ exports.up = function (knex) {
       .onDelete("CASCADE");
     table.string("name").notNullable();
     table.string("thumbnail");
+    table.string("blobName");
     table.string("description").notNullable();
     table.boolean("active").notNullable().defaultTo(true);
     table.timestamp("created_at").defaultTo(knex.fn.now());

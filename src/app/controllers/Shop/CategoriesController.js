@@ -12,6 +12,7 @@ module.exports = {
         departments_id: department,
         description,
         thumbnail: url,
+        blobName,
       });
       return res.status(201).json({ message: "Cadastro efetuado com sucesso" });
     } catch (error) {

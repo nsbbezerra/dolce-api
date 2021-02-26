@@ -14,6 +14,7 @@ exports.up = function (knex) {
     table.string("name").notNullable();
     table.string("hex").notNullable();
     table.string("image").notNullable();
+    table.string("blobName");
     table.boolean("active").notNullable().defaultTo(true);
     table.timestamp("created_at").defaultTo(knex.fn.now());
     table.timestamp("updated_at").defaultTo(knex.fn.now());

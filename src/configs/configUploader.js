@@ -3,36 +3,36 @@ const path = require("path");
 const { MulterAzureStorage } = require("multer-azure-blob-storage");
 
 const azureDepartmentStorage = new MulterAzureStorage({
-  connectionString: process.env.AZURE_CONNECTION,
-  accessKey: process.env.AZURE_KEY,
-  accountName: process.env.AZURE_ACCOUNT_NAME,
+  connectionString: process.env.AZURE_STORAGE_CONNECTION_STRING,
+  accessKey: process.env.AZURE_STORAGE_ACCESS_KEY,
+  accountName: process.env.AZURE_STORAGE_ACCOUNT,
   containerName: "departments",
   containerAccessLevel: "blob",
   urlExpirationTime: 60,
 });
 
 const azureCategoriesStorage = new MulterAzureStorage({
-  connectionString: process.env.AZURE_CONNECTION,
-  accessKey: process.env.AZURE_KEY,
-  accountName: process.env.AZURE_ACCOUNT_NAME,
+  connectionString: process.env.AZURE_STORAGE_CONNECTION_STRING,
+  accessKey: process.env.AZURE_STORAGE_ACCESS_KEY,
+  accountName: process.env.AZURE_STORAGE_ACCOUNT,
   containerName: "categories",
   containerAccessLevel: "blob",
   urlExpirationTime: 60,
 });
 
 const azureProductsStorage = new MulterAzureStorage({
-  connectionString: process.env.AZURE_CONNECTION,
-  accessKey: process.env.AZURE_KEY,
-  accountName: process.env.AZURE_ACCOUNT_NAME,
+  connectionString: process.env.AZURE_STORAGE_CONNECTION_STRING,
+  accessKey: process.env.AZURE_STORAGE_ACCESS_KEY,
+  accountName: process.env.AZURE_STORAGE_ACCOUNT,
   containerName: "products",
   containerAccessLevel: "blob",
   urlExpirationTime: 60,
 });
 
 const azureColorsStorage = new MulterAzureStorage({
-  connectionString: process.env.AZURE_CONNECTION,
-  accessKey: process.env.AZURE_KEY,
-  accountName: process.env.AZURE_ACCOUNT_NAME,
+  connectionString: process.env.AZURE_STORAGE_CONNECTION_STRING,
+  accessKey: process.env.AZURE_STORAGE_ACCESS_KEY,
+  accountName: process.env.AZURE_STORAGE_ACCOUNT,
   containerName: "colors",
   containerAccessLevel: "blob",
   urlExpirationTime: 60,

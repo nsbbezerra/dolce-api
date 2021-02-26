@@ -3,6 +3,7 @@ exports.up = function (knex) {
     table.increments("id");
     table.string("name").notNullable();
     table.string("thumbnail");
+    table.string("blobName");
     table.string("description");
     table.boolean("active").notNullable().defaultTo(true);
     table.timestamp("created_at").defaultTo(knex.fn.now());
