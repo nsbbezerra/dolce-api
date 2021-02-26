@@ -2,7 +2,16 @@ const knex = require("../../../database/pg");
 
 module.exports = {
   async Store(req, res) {
-    const { client, street, number, comp, bairro, cep, city, state } = req.body;
+    const {
+      client_id,
+      street,
+      number,
+      comp,
+      bairro,
+      cep,
+      city,
+      state,
+    } = req.body;
     const auth = req.userId;
     try {
       const findAuth = await knex("employees")
@@ -16,7 +25,7 @@ module.exports = {
           .json({ message: "Usuário sem permissão para esta ação" });
       }
       await knex("addresses").insert({
-        client_id: client,
+        client_id,
         street,
         number,
         comp,

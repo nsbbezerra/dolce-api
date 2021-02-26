@@ -17,6 +17,7 @@ module.exports = {
           password: hash,
         })
         .returning("id");
+      console.log(id);
       return res
         .status(201)
         .json({ message: "Cliente cadastrado com sucesso", client: id });
