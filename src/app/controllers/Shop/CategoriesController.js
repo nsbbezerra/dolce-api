@@ -62,7 +62,7 @@ module.exports = {
               });
               return res
                 .status(201)
-                .json({ message: "Imagem alterada com sucesso" });
+                .json({ message: "Imagem alterada com sucesso", url });
             } else {
               const errorMessage = "Blob service not response";
               return res.status(400).json({
