@@ -27,7 +27,23 @@ module.exports = {
 
   async Show(req, res) {
     try {
-      const categories = await knex.select("*").table("categories");
+      const categories = await knex
+        .select([
+          "categories.id",
+          "categories.name",
+          "categories.thumbnail",
+          "categories.blobName",
+          "categories.description",
+          "categories.active",
+          "departments.name as dep_name",
+        ])
+        .from("categories")
+        .innerJoin(
+          "departments",
+          "departments.id",
+          "categories.departments_id"
+        );
+
       return res.status(201).json(categories);
     } catch (error) {
       const errorMessage = error.message;
@@ -43,7 +59,7 @@ module.exports = {
     const { blobName } = req.file;
 
     try {
-      const url = `${configs.blobProducts}${blobName}`;
+      const url = `${configs.blobCategory}${blobName}`;
       const azureBlobService = azure.createBlobService();
       const category = await knex("categories")
         .select("id", "blobName")
@@ -60,9 +76,11 @@ module.exports = {
                 thumbnail: url,
                 blobName: blobName,
               });
-              return res
-                .status(201)
-                .json({ message: "Imagem alterada com sucesso", url });
+              return res.status(201).json({
+                message: "Imagem alterada com sucesso",
+                url,
+                blobName,
+              });
             } else {
               const errorMessage = "Blob service not response";
               return res.status(400).json({
@@ -83,6 +101,48 @@ module.exports = {
       const errorMessage = error.message;
       return res.status(400).json({
         message: "Ocorreu um erro ao substituir a imagem",
+        errorMessage,
+      });
+    }
+  },
+
+  async Update(req, res) {
+    const { id } = req.params;
+    const { name, description } = req.body;
+
+    try {
+      const category = await knex("categories")
+        .where({ id: id })
+        .update({ name, description })
+        .returning("*");
+      return res
+        .status(201)
+        .json({ message: "Informações alteradas com sucesso", category });
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao alterar as informações",
+        errorMessage,
+      });
+    }
+  },
+
+  async Active(req, res) {
+    const { id } = req.params;
+    const { active } = req.body;
+
+    try {
+      const category = await knex("categories")
+        .where({ id: id })
+        .update({ active })
+        .returning("*");
+      return res
+        .status(201)
+        .json({ message: "Informações alteradas com sucesso", category });
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao alterar as informações",
         errorMessage,
       });
     }

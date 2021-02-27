@@ -28,7 +28,10 @@ module.exports = {
 
   async Show(req, res) {
     try {
-      const departments = await knex.select("*").table("departments");
+      const departments = await knex
+        .select("*")
+        .table("departments")
+        .orderBy("name");
       return res.status(201).json(departments);
     } catch (error) {
       const errorMessage = error.message;
@@ -60,9 +63,11 @@ module.exports = {
                 thumbnail: url,
                 blobName: blobName,
               });
-              return res
-                .status(201)
-                .json({ message: "Imagem alterada com sucesso", url });
+              return res.status(201).json({
+                message: "Imagem alterada com sucesso",
+                url,
+                blobName,
+              });
             } else {
               const errorMessage = "Blob service not response";
               return res.status(400).json({
@@ -83,6 +88,48 @@ module.exports = {
       const errorMessage = error.message;
       return res.status(400).json({
         message: "Ocorreu um erro ao alterar a imagem",
+        errorMessage,
+      });
+    }
+  },
+
+  async Update(req, res) {
+    const { id } = req.params;
+    const { name, description } = req.body;
+
+    try {
+      const department = await knex("departments")
+        .where({ id: id })
+        .update({ name, description })
+        .returning("*");
+      return res
+        .status(201)
+        .json({ message: "Informações alteradas com sucesso", department });
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao alterar as informações",
+        errorMessage,
+      });
+    }
+  },
+
+  async Activate(req, res) {
+    const { id } = req.params;
+    const { active } = req.body;
+
+    try {
+      const department = await knex("departments")
+        .where({ id: id })
+        .update({ active })
+        .returning("*");
+      return res
+        .status(201)
+        .json({ message: "Alteração feita com sucesso", department });
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao ativar/bloquear o departamento",
         errorMessage,
       });
     }

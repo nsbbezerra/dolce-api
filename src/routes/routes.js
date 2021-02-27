@@ -78,6 +78,12 @@ router.put(
   verifyToken,
   DepartmentsControllerShop.UpdateImage
 );
+router.put("/departments/:id", verifyToken, DepartmentsControllerShop.Update);
+router.put(
+  "/activeDepartment/:id",
+  verifyToken,
+  DepartmentsControllerShop.Activate
+);
 
 /** CATEGORIAS SHOP */
 router.post(
@@ -93,6 +99,8 @@ router.put(
   verifyToken,
   CategoriesControllerShop.UpdateImage
 );
+router.put("/categories/:id", verifyToken, CategoriesControllerShop.Update);
+router.put("/activeCategory/:id", verifyToken, CategoriesControllerShop.Active);
 
 /** PRODUCTS SHOP */
 router.get("/products", ProductControllerShop.Show);
