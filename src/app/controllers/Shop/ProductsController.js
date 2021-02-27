@@ -97,7 +97,54 @@ module.exports = {
 
   async Show(req, res) {
     try {
-      const products = await knex.select("*").table("products");
+      const products = await knex
+        .select([
+          "products.id",
+          "products.name",
+          "products.thumbnail",
+          "products.blobName",
+          "products.description",
+          "products.sku",
+          "products.barcode",
+          "products.cfop",
+          "products.ncm",
+          "products.icms_rate",
+          "products.icms_origin",
+          "products.icms_csosn",
+          "products.icms_st_rate",
+          "products.icms_marg_val_agregate",
+          "products.icms_st_mod_bc",
+          "products.fcp_rate",
+          "products.fcp_st_rate",
+          "products.fcp_ret_rate",
+          "products.ipi_cst",
+          "products.ipi_rate",
+          "products.ipi_code",
+          "products.pis_cst",
+          "products.pis_rate",
+          "products.cofins_cst",
+          "products.cofins_rate",
+          "products.cest",
+          "products.cost_value",
+          "products.other_cost",
+          "products.sale_value",
+          "products.freight_weight",
+          "products.freight_width",
+          "products.freight_height",
+          "products.freight_diameter",
+          "products.freight_length",
+          "products.rating",
+          "products.promotional",
+          "products.promotional_value",
+          "products.active",
+          "departments.name as dep_name",
+          "categories.name as cat_name",
+          "departments.id as dep_id",
+          "categories.id as cat_id",
+        ])
+        .from("products")
+        .innerJoin("departments", "departments.id", "products.departments_id")
+        .innerJoin("categories", "categories.id", "products.categories_id");
       return res.status(201).json(products);
     } catch (error) {
       const errorMessage = error.message;
@@ -142,13 +189,11 @@ module.exports = {
                 thumbnail: url,
                 blobName: blobName,
               });
-              return res
-                .status(201)
-                .json({
-                  message: "Imagem alterada com sucesso",
-                  url,
-                  blobName,
-                });
+              return res.status(201).json({
+                message: "Imagem alterada com sucesso",
+                url,
+                blobName,
+              });
             } else {
               const errorMessage = "Blob service not response";
               return res.status(400).json({
@@ -169,6 +214,159 @@ module.exports = {
       const errorMessage = error.message;
       return res.status(400).json({
         message: "Ocorreu um erro ao substituir a imagem",
+        errorMessage,
+      });
+    }
+  },
+
+  async Update(req, res) {
+    const { id } = req.params;
+    const {
+      departments_id,
+      categories_id,
+      name,
+      description,
+      sku,
+      barcode,
+      cfop,
+      ncm,
+      icms_rate,
+      icms_origin,
+      icms_csosn,
+      icms_st_rate,
+      icms_marg_val_agregate,
+      icms_st_mod_bc,
+      fcp_rate,
+      fcp_st_rate,
+      fcp_ret_rate,
+      ipi_cst,
+      ipi_rate,
+      ipi_code,
+      pis_cst,
+      pis_rate,
+      cofins_cst,
+      cofins_rate,
+      cest,
+      cost_value,
+      other_cost,
+      sale_value,
+      code_freight,
+      freight_weight,
+      freight_width,
+      freight_height,
+      freight_diameter,
+      freight_length,
+    } = req.body;
+
+    try {
+      const product = await knex("products")
+        .where({ id: id })
+        .update({
+          departments_id,
+          categories_id,
+          name,
+          description,
+          sku,
+          barcode,
+          cfop,
+          ncm,
+          icms_rate,
+          icms_origin,
+          icms_csosn,
+          icms_st_rate,
+          icms_marg_val_agregate,
+          icms_st_mod_bc,
+          fcp_rate,
+          fcp_st_rate,
+          fcp_ret_rate,
+          ipi_cst,
+          ipi_rate,
+          ipi_code,
+          pis_cst,
+          pis_rate,
+          cofins_cst,
+          cofins_rate,
+          cest,
+          cost_value,
+          other_cost,
+          sale_value,
+          code_freight,
+          freight_weight,
+          freight_width,
+          freight_height,
+          freight_diameter,
+          freight_length,
+        })
+        .returning("*");
+      return res
+        .status(201)
+        .json({ message: "Alteração concluída com sucesso", product });
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao alterar as informações",
+        errorMessage,
+      });
+    }
+  },
+
+  async SetPromotional(req, res) {
+    const { id } = req.params;
+    const { promotional, promotional_value } = req.body;
+    try {
+      const product = await knex("products")
+        .where({ id: id })
+        .update({ promotional, promotional_value })
+        .returning("*");
+      return res
+        .status(201)
+        .json({ message: "Alteração concluída com sucesso", product });
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao alterar as informações",
+        errorMessage,
+      });
+    }
+  },
+
+  async Active(req, res) {
+    const { id } = req.params;
+    const { active } = req.body;
+
+    try {
+      const product = await knex("products")
+        .where({ id: id })
+        .update({ active })
+        .returning("id", "active");
+      return res
+        .status(201)
+        .json({ message: "Alteração concluída com sucesso", product });
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao alterar as informações",
+        errorMessage,
+      });
+    }
+  },
+
+  async UpdateStock(req, res) {
+    const { id } = req.params;
+    const { amount } = req.body;
+
+    try {
+      const size = await knex("sizes")
+        .where({ products_id: id })
+        .update({ amount })
+        .returning("id", "amount");
+      return res
+        .status(201)
+        .json({ message: "Alteração concluída com sucesso", size });
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao alterar as informações",
         errorMessage,
       });
     }

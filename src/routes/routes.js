@@ -117,6 +117,14 @@ router.put(
   verifyToken,
   ProductControllerShop.UpdateImage
 );
+router.put("/products/:id", verifyToken, ProductControllerShop.Update);
+router.put(
+  "/setPromotional/:id",
+  verifyToken,
+  ProductControllerShop.SetPromotional
+);
+router.put("/productsActive/:id", verifyToken, ProductControllerShop.Active);
+router.put("/updateStock/:id", verifyToken, ProductControllerShop.UpdateStock);
 
 /** COLORS SHOP */
 router.get("/colors", ColorsControllerShop.Show);
