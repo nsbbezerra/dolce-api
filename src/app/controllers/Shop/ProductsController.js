@@ -145,6 +145,7 @@ module.exports = {
         .from("products")
         .innerJoin("departments", "departments.id", "products.departments_id")
         .innerJoin("categories", "categories.id", "products.categories_id");
+
       return res.status(201).json(products);
     } catch (error) {
       const errorMessage = error.message;

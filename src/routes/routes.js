@@ -141,6 +141,7 @@ router.put("/sizes/:id", verifyToken, SizesControllerShop.Update);
 router.delete("/sizes/:id", verifyToken, SizesControllerShop.Remove);
 router.get("/sizeDependets/:product", SizesControllerShop.FindDependents);
 router.get("/findSize/:color", SizesControllerShop.Find);
+router.get("/findSizeByProduct/:product", SizesControllerShop.FindByProducts);
 
 /** IMAGES COLORS SHOP */
 router.get("/imageColors", ImageColorsController.Show);

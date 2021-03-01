@@ -57,17 +57,40 @@ module.exports = {
     }
   },
 
+  async FindByProducts(req, res) {
+    const { product } = req.params;
+    try {
+      const sizes = await knex
+        .select([
+          "sizes.id",
+          "sizes.amount",
+          "sizes.size",
+          "colors.name",
+          "colors.hex",
+        ])
+        .from("sizes")
+        .whereExists(function () {
+          this.select("id").from("sizes").whereRaw(`products_id = ${product}`);
+        })
+        .innerJoin("colors", "colors.id", "sizes.colors_id");
+      return res.status(200).json(sizes);
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao buscar as informações",
+        errorMessage,
+      });
+    }
+  },
+
   async Update(req, res) {
-    const { product, size, amount } = req.body;
+    const { size, amount } = req.body;
     const { id } = req.params;
     try {
       await knex("sizes").where({ id: id }).update({ size, amount });
-      const sizes = await knex("sizes")
-        .where({ products_id: product })
-        .select("*");
       return res
         .status(201)
-        .json({ message: "Alteração concluída com sucesso", sizes });
+        .json({ message: "Alteração concluída com sucesso" });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
