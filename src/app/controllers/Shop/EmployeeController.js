@@ -61,19 +61,23 @@ module.exports = {
   },
 
   async Show(req, res) {
-    const auth = req.userId;
     try {
-      const findAuth = await Employee.findOne({ _id: auth }).select(
-        "+premission"
-      );
-
-      if (!findAuth || findAuth.premission !== "shop") {
-        return res
-          .status(401)
-          .json({ message: "Usuário sem permissão para esta ação" });
-      }
-      const employers = await Employee.find().sort({ name: 1 });
-      return res.status(200).json(employers);
+      const employees = await knex
+        .select(
+          "id",
+          "name",
+          "gender",
+          "contact",
+          "user",
+          "active",
+          "admin",
+          "sales",
+          "caixa",
+          "comission",
+          "comissioned"
+        )
+        .from("employees");
+      return res.status(200).json(employees);
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
@@ -85,75 +89,22 @@ module.exports = {
 
   async Edit(req, res) {
     const { id } = req.params;
-    const {
-      name,
-      gender,
-      contact,
-      admin,
-      sales,
-      caixa,
-      comission,
-      comissioned,
-      user,
-    } = req.body;
-    const auth = req.userId;
+    const { name, gender, contact, password, user } = req.body;
     try {
-      const findAuth = await Employee.findOne({ _id: auth }).select(
-        "+premission"
-      );
-
-      if (!findAuth || findAuth.premission !== "shop") {
-        return res
-          .status(401)
-          .json({ message: "Usuário sem permissão para esta ação" });
-      }
-      await Employee.findOneAndUpdate(
-        { _id: id },
-        {
-          $set: {
-            name,
-            gender,
-            contact,
-            admin,
-            sales,
-            caixa,
-            comission,
-            comissioned,
-            user,
-          },
-        }
-      );
-      const employers = await Employee.find().sort({ name: 1 });
+      const hash = await bcrypt.hash(password, 10);
+      const employee = await knex("employees")
+        .where({ id: id })
+        .update({
+          name,
+          gender,
+          contact,
+          user,
+          password: hash,
+        })
+        .returning("*");
       return res
         .status(200)
-        .json({ message: "Alteração feita com sucesso", employers });
-    } catch (error) {
-      const errorMessage = error.message;
-      return res.status(400).json({
-        message: "Ocorreu um erro ao editar o colaborador",
-        errorMessage,
-      });
-    }
-  },
-
-  async Password(req, res) {
-    const { id } = req.params;
-    const { password } = req.body;
-    const auth = req.userId;
-    try {
-      const findAuth = await Employee.findOne({ _id: auth }).select(
-        "+premission"
-      );
-
-      if (!findAuth || findAuth.premission !== "shop") {
-        return res
-          .status(401)
-          .json({ message: "Usuário sem permissão para esta ação" });
-      }
-      const employee = await Employee.findOne({ _id: id }).select("+password");
-      employee.password = password;
-      employee.save();
-      return res.status(200).json({ message: "Alteração feita com sucesso" });
+        .json({ message: "Alteração feita com sucesso", employee });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
@@ -166,26 +117,55 @@ module.exports = {
   async Block(req, res) {
     const { id } = req.params;
     const { active } = req.body;
-    const auth = req.userId;
-    try {
-      const findAuth = await Employee.findOne({ _id: auth }).select(
-        "+premission"
-      );
 
-      if (!findAuth || findAuth.premission !== "shop") {
-        return res
-          .status(401)
-          .json({ message: "Usuário sem permissão para esta ação" });
-      }
-      await Employee.findOneAndUpdate({ _id: id }, { $set: { active } });
-      const employers = await Employee.find().sort({ name: 1 });
-      return res
-        .status(200)
-        .json({ message: "Alteração feita com sucesso", employers });
+    try {
+      await knex("employees").where({ id: id }).update({ active });
+      return res.status(200).json({ message: "Alteração feita com sucesso" });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
         message: "Ocorreu um erro ao bloquear/ativar o colaborador",
+        errorMessage,
+      });
+    }
+  },
+
+  async Permissions(req, res) {
+    const { id } = req.params;
+    const { admin, sales, caixa } = req.body;
+
+    try {
+      const employee = await knex("employees")
+        .where({ id: id })
+        .update({ admin, sales, caixa })
+        .returning("*");
+      return res
+        .status(201)
+        .json({ message: "Gerenciamento completado com sucesso", employee });
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao gerenciar o colaborador",
+        errorMessage,
+      });
+    }
+  },
+
+  async Comission(req, res) {
+    const { id } = req.params;
+    const { comission, comissioned } = req.body;
+    try {
+      const employee = await knex("employees")
+        .where({ id: id })
+        .update({ comission, comissioned })
+        .returning("*");
+      return res
+        .status(201)
+        .json({ message: "Alteração concluída com sucesso", employee });
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao gerenciar o colaborador",
         errorMessage,
       });
     }
@@ -228,21 +208,6 @@ module.exports = {
       const errorMessage = error.message;
       return res.status(400).json({
         message: "Ocorreu uma falha ao autenticar",
-        errorMessage,
-      });
-    }
-  },
-
-  async Logout(req, res) {
-    const { token } = req.body;
-
-    try {
-      await Blacklist.create({ token });
-      return res.status(201).end();
-    } catch (error) {
-      const errorMessage = error.message;
-      return res.status(400).json({
-        message: "Ocorreu uma falha ao fazer o logout",
         errorMessage,
       });
     }

@@ -47,12 +47,12 @@ router.put("/blockbankaccount/:id", verifyToken, BankAccountController.Block);
 
 /** ROTAS PARA FUNCIONÁRIOS */
 router.post("/employee", verifyToken, EmployeeController.Store);
-router.get("/employee", verifyToken, EmployeeController.Show);
+router.get("/employee", EmployeeController.Show);
 router.put("/employee/:id", verifyToken, EmployeeController.Edit);
-router.put("/employeepass/:id", verifyToken, EmployeeController.Password);
 router.put("/employeeact/:id", verifyToken, EmployeeController.Block);
 router.post("/employeeautenticate", EmployeeController.Autenticate);
-router.post("/employeelogout", EmployeeController.Logout);
+router.put("/geremployee/:id", verifyToken, EmployeeController.Permissions);
+router.put("/comission/:id", verifyToken, EmployeeController.Comission);
 
 /** MOVIMENTAÇÃO DE CAIXA */
 router.post("/cashhandling", verifyToken, CashHandlingController.Stores);
