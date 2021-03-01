@@ -223,8 +223,6 @@ module.exports = {
   async Update(req, res) {
     const { id } = req.params;
     const {
-      departments_id,
-      categories_id,
       name,
       description,
       sku,
@@ -263,8 +261,6 @@ module.exports = {
       const product = await knex("products")
         .where({ id: id })
         .update({
-          departments_id,
-          categories_id,
           name,
           description,
           sku,
