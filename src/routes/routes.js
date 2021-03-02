@@ -163,8 +163,21 @@ router.put("/details/:id", verifyToken, DetailsControllerShop.Update);
 router.delete("/details/:id", verifyToken, DetailsControllerShop.Remove);
 
 /** ROTA PARA OS FORNECEDORES */
-router.post("/providers", verifyToken, ProvidersController.Store);
+router.post(
+  "/providers",
+  multer(uploaderConfig.azureProvidersImage).single("thumbnail"),
+  verifyToken,
+  ProvidersController.Store
+);
+router.put(
+  "/changeProviderImage/:id",
+  multer(uploaderConfig.azureProvidersImage).single("thumbnail"),
+  verifyToken,
+  ProvidersController.UpdateImage
+);
 router.get("/providers", ProvidersController.Show);
+router.put("/providers/:id", verifyToken, ProvidersController.Update);
+router.put("/providerActive/:id", verifyToken, ProvidersController.Active);
 
 router.post("/test", TestController.Test);
 
