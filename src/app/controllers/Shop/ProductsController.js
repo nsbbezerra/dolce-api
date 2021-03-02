@@ -40,6 +40,7 @@ module.exports = {
       freight_diameter,
       freight_length,
       freight_format,
+      provider,
     } = req.body;
     const { blobName } = req.file;
     const url = `${configs.blobProducts}${blobName}`;
@@ -82,6 +83,7 @@ module.exports = {
         freight_format,
         thumbnail: url,
         blobName,
+        providers_id: provider,
       });
       return res
         .status(201)
@@ -160,7 +162,8 @@ module.exports = {
     try {
       const departments = await knex.select("*").table("departments");
       const categories = await knex.select("*").table("categories");
-      return res.status(201).json({ departments, categories });
+      const providers = await knex.select("*").table("providers");
+      return res.status(201).json({ departments, categories, providers });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({

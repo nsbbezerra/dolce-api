@@ -18,6 +18,7 @@ const SizesControllerShop = require("../app/controllers/Shop/SizesController");
 const ImageColorsController = require("../app/controllers/Shop/ImageColorsController");
 const DetailsControllerShop = require("../app/controllers/Shop/DetailsControllerShop");
 const TestController = require("../app/controllers/Shop/TestController");
+const ProvidersController = require("../app/controllers/Shop/ProviderController");
 
 async function verifyToken(req, res, next) {
   const token = req.headers["x-access-token"];
@@ -160,6 +161,10 @@ router.get("/details/:product", DetailsControllerShop.Find);
 router.post("/details", verifyToken, DetailsControllerShop.Store);
 router.put("/details/:id", verifyToken, DetailsControllerShop.Update);
 router.delete("/details/:id", verifyToken, DetailsControllerShop.Remove);
+
+/** ROTA PARA OS FORNECEDORES */
+router.post("/providers", verifyToken, ProvidersController.Store);
+router.get("/providers", ProvidersController.Show);
 
 router.post("/test", TestController.Test);
 

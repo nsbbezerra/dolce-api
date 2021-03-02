@@ -9,4 +9,5 @@ module.exports = {
   blobDepartments: "https://nkgestblob.blob.core.windows.net/departments/",
   blobDocuments: "https://nkgestblob.blob.core.windows.net/pdf/",
   blobProducts: "https://nkgestblob.blob.core.windows.net/products/",
+  blobProvider: "https://nkgestblob.blob.core.windows.net/providers/",
 };
