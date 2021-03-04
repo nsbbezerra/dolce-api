@@ -12,29 +12,22 @@ module.exports = {
       city,
       state,
     } = req.body;
-    const auth = req.userId;
     try {
-      const findAuth = await knex("employees")
-        .where({ id: auth })
-        .select("premission")
-        .first();
-
-      if (!findAuth || findAuth.premission !== "shop") {
-        return res
-          .status(401)
-          .json({ message: "Usuário sem permissão para esta ação" });
-      }
-      await knex("addresses").insert({
-        client_id,
-        street,
-        number,
-        comp,
-        bairro,
-        cep,
-        city,
-        state,
-      });
-      return res.status(201).json({ message: "Cadastro efetuado com sucesso" });
+      const address = await knex("addresses")
+        .insert({
+          client_id,
+          street,
+          number,
+          comp,
+          bairro,
+          cep,
+          city,
+          state,
+        })
+        .returning("*");
+      return res
+        .status(201)
+        .json({ message: "Cadastro efetuado com sucesso", address });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
@@ -46,19 +39,10 @@ module.exports = {
 
   async Index(req, res) {
     const { id } = req.params;
-    const auth = req.userId;
     try {
-      const findAuth = await Employee.findOne({ _id: auth }).select(
-        "+premission"
-      );
-      if (!findAuth || findAuth.premission !== "shop") {
-        return res
-          .status(401)
-          .json({ message: "Usuário sem permissão para esta ação" });
-      }
-      const addresses = await Addresses.find({ client: id }).sort({
-        createDate: 1,
-      });
+      const addresses = await knex("addresses")
+        .where({ client_id: id })
+        .select("*");
       return res.status(200).json(addresses);
     } catch (error) {
       const errorMessage = error.message;
@@ -72,26 +56,14 @@ module.exports = {
   async Edit(req, res) {
     const { id } = req.params;
     const { street, number, comp, bairro, cep, city, state } = req.body;
-    const auth = req.userId;
     try {
-      const findAuth = await Employee.findOne({ _id: auth }).select(
-        "+premission"
-      );
-      if (!findAuth || findAuth.premission !== "shop") {
-        return res
-          .status(401)
-          .json({ message: "Usuário sem permissão para esta ação" });
-      }
-      await Addresses.findOneAndUpdate(
-        { _id: id },
-        { $set: { street, number, comp, bairro, cep, city, state } }
-      );
-      const addresses = await Addresses.find({ client: id }).sort({
-        createDate: 1,
-      });
+      const address = await knex("addresses")
+        .where({ id: id })
+        .update({ street, number, comp, bairro, cep, city, state })
+        .returning("*");
       return res
         .status(201)
-        .json({ message: "Alteração efetuada com sucesso", addresses });
+        .json({ message: "Alteração efetuada com sucesso", address });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
@@ -101,19 +73,10 @@ module.exports = {
     }
   },
 
-  async Remove(res, req) {
+  async Remove(req, res) {
     const { id } = req.params;
-    const auth = req.userId;
     try {
-      const findAuth = await Employee.findOne({ _id: auth }).select(
-        "+premission"
-      );
-      if (!findAuth || findAuth.premission !== "shop") {
-        return res
-          .status(401)
-          .json({ message: "Usuário sem permissão para esta ação" });
-      }
-      await Addresses.findOneAndDelete({ _id: id });
+      await knex("addresses").where({ id: id }).del();
       return res.status(200).json({ message: "Endereço excluído com sucesso" });
     } catch (error) {
       const errorMessage = error.message;

@@ -36,7 +36,7 @@ async function verifyToken(req, res, next) {
 //** ROTAS PARA OS ENDEREÇOS */
 
 router.post("/address", verifyToken, AddressesController.Store); //Cadastrar Endereço
-router.get("/address/:id", verifyToken, AddressesController.Index); //Buscar Endereços de um cliente específico
+router.get("/address/:id", AddressesController.Index); //Buscar Endereços de um cliente específico
 router.put("/address/:id", verifyToken, AddressesController.Edit); //Editar um Endereço
 router.delete("/address/:id", verifyToken, AddressesController.Remove); //Remover um Endereço
 
