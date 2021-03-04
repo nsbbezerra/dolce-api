@@ -64,6 +64,9 @@ router.delete("/cashhandling/:id", verifyToken, CashHandlingController.Remove);
 /** CLIENTES SHOP */
 router.post("/clients", verifyToken, ClientControllerShop.Store);
 router.get("/clients", ClientControllerShop.Show);
+router.put("/clients/:id", verifyToken, ClientControllerShop.Update);
+router.put("/activeclient/:id", verifyToken, ClientControllerShop.Active);
+router.put("/restrictclient/:id", verifyToken, ClientControllerShop.Restrict);
 
 /** DEPARTAMENTOS SHOP */
 router.post(
