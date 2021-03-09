@@ -47,6 +47,15 @@ const azureProviderStorage = new MulterAzureStorage({
   urlExpirationTime: 60,
 });
 
+const azureBankStorage = new MulterAzureStorage({
+  connectionString: process.env.AZURE_STORAGE_CONNECTION_STRING,
+  accessKey: process.env.AZURE_STORAGE_ACCESS_KEY,
+  accountName: process.env.AZURE_STORAGE_ACCOUNT,
+  containerName: "bank",
+  containerAccessLevel: "blob",
+  urlExpirationTime: 60,
+});
+
 module.exports = {
   storageImg: multer.diskStorage({
     destination: path.resolve(__dirname, "..", "..", "uploads", "img"),
@@ -83,4 +92,5 @@ module.exports = {
   azureProductsImage: multer({ storage: azureProductsStorage }),
   azureColorsImage: multer({ storage: azureColorsStorage }),
   azureProvidersImage: multer({ storage: azureProviderStorage }),
+  azureBankImage: multer({ storage: azureBankStorage }),
 };

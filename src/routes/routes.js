@@ -41,10 +41,21 @@ router.put("/address/:id", verifyToken, AddressesController.Edit); //Editar um E
 router.delete("/address/:id", verifyToken, AddressesController.Remove); //Remover um Endereço
 
 /** ROTAS PARA AS CONTAS BANCARIAS */
-router.post("/bankaccount", verifyToken, BankAccountController.Store);
-router.get("/bankaccount", verifyToken, BankAccountController.Show);
-router.put("/bankaccount/:id", verifyToken, BankAccountController.Edit);
-router.put("/blockbankaccount/:id", verifyToken, BankAccountController.Block);
+router.post(
+  "/accountbank",
+  multer(uploaderConfig.azureBankImage).single("thumbnail"),
+  verifyToken,
+  BankAccountController.Store
+);
+router.get("/accountbank", BankAccountController.Show);
+router.put("/accountbank/:id", verifyToken, BankAccountController.Update);
+router.put(
+  "/imagebankaccount/:id",
+  multer(uploaderConfig.azureBankImage).single("thumbnail"),
+  verifyToken,
+  BankAccountController.UpdateImage
+);
+router.put("/activebankaccount/:id", verifyToken, BankAccountController.Active);
 
 /** ROTAS PARA FUNCIONÁRIOS */
 router.post("/employee", verifyToken, EmployeeController.Store);

@@ -1,114 +1,155 @@
-//const BankAccount = require("../../models/bankAccount");
-//const Employee = require("../../models/employee");
+const knex = require("../../../database/pg");
+const configs = require("../../../configs/configs");
+const azure = require("azure-storage");
 
 module.exports = {
   async Store(req, res) {
-    const { bank, value } = req.body;
-    const auth = req.userId;
+    const {
+      bank,
+      mode,
+      agency,
+      account,
+      variation,
+      operation,
+      amount,
+    } = req.body;
+    const { blobName } = req.file;
+    const url = `${configs.blobBank}${blobName}`;
+
     try {
-      const findAuth = await Employee.findOne({ _id: auth }).select(
-        "+premission"
-      );
-      if (!findAuth || findAuth.premission !== "shop") {
-        return res
-          .status(401)
-          .json({ message: "Usuário sem permissão para esta ação" });
-      }
-      await BankAccount.create({ bank, value });
-      const bankAccount = await BankAccount.find().sort({ bank: 1 });
-      return res.status(201).json({
-        message: "Conta Bancária cadastrada com sucesso",
-        bankAccount,
+      await knex("bankAccount").insert({
+        bank,
+        mode,
+        agency,
+        account,
+        variation,
+        operation,
+        amount,
+        thumbnail: url,
+        blobName,
       });
+      return res
+        .status(201)
+        .json({ message: "Conta bancária cadastrada com sucesso" });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
-        message: "Ocorreu um erro cadastrar a conta bancária",
+        message: "Ocorreu um erro ao cadastrar a conta bancária",
         errorMessage,
       });
     }
   },
 
   async Show(req, res) {
-    const auth = req.userId;
     try {
-      const findAuth = await Employee.findOne({ _id: auth }).select(
-        "+premission"
-      );
-      if (!findAuth || findAuth.premission !== "shop") {
-        return res
-          .status(401)
-          .json({ message: "Usuário sem permissão para esta ação" });
-      }
-      const bankAccount = await BankAccount.find().sort({ bank: 1 });
-      return res.status(200).json(bankAccount);
+      const banks = await knex.select("*").from("bankAccount");
+      return res.status(200).json(banks);
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
-        message: "Ocorreu um erro buscar as contas bancárias",
+        message: "Ocorreu um erro ao listar as contas bancárias",
         errorMessage,
       });
     }
   },
 
-  async Edit(req, res) {
+  async Update(req, res) {
+    const {
+      bank,
+      mode,
+      agency,
+      account,
+      variation,
+      operation,
+      amount,
+    } = req.body;
     const { id } = req.params;
-    const { bank, value } = req.body;
-    const auth = req.userId;
+
     try {
-      const findAuth = await Employee.findOne({ _id: auth }).select(
-        "+premission"
-      );
-      if (!findAuth || findAuth.premission !== "shop") {
-        return res
-          .status(401)
-          .json({ message: "Usuário sem permissão para esta ação" });
-      }
-      await BankAccount.findOneAndUpdate(
-        { _id: id },
-        {
-          $set: {
-            bank,
-            value,
-          },
+      const banks = await knex("bankAccount")
+        .where({ id: id })
+        .update({ bank, mode, agency, account, variation, operation, amount })
+        .returning("*");
+      return res
+        .status(201)
+        .json({ message: "Conta bancária alterada com sucesso", banks });
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao editar a conta bancária",
+        errorMessage,
+      });
+    }
+  },
+
+  async UpdateImage(req, res) {
+    const { id } = req.params;
+    const { blobName } = req.file;
+
+    try {
+      const url = `${configs.blobBank}${blobName}`;
+      const azureBlobService = azure.createBlobService();
+      const bank = await knex("bankAccount")
+        .select("id", "blobName")
+        .where({ id: id })
+        .first();
+
+      await azureBlobService.deleteBlobIfExists(
+        "bank",
+        bank.blobName,
+        async function (error, result, response) {
+          if (!error) {
+            if (result === true) {
+              await knex("bankAccount").where({ id: id }).update({
+                thumbnail: url,
+                blobName: blobName,
+              });
+              return res.status(201).json({
+                message: "Imagem alterada com sucesso",
+                url,
+                blobName,
+              });
+            } else {
+              const errorMessage = "Blob service not response";
+              return res.status(400).json({
+                message: "Ocorreu um erro ao substituir a imagem",
+                errorMessage,
+              });
+            }
+          } else {
+            const errorMessage = error.message;
+            return res.status(400).json({
+              message: "Ocorreu um erro ao substituir a imagem",
+              errorMessage,
+            });
+          }
         }
       );
-
-      const bankAccount = await BankAccount.find().sort({ bank: 1 });
-      return res.status(200).json({
-        message: "Conta Bancária atualizada com sucesso",
-        bankAccount,
-      });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
-        message: "Ocorreu um erro editar a conta bancária",
+        message: "Ocorreu um erro ao alterar a imagem da conta bancária",
         errorMessage,
       });
     }
   },
 
-  async Block(req, res) {
-    const { id, active } = req.body;
-    const auth = req.userId;
+  async Active(req, res) {
+    const { id } = req.params;
+    const { active } = req.body;
+
     try {
-      const findAuth = await Employee.findOne({ _id: auth }).select(
-        "+premission"
-      );
-      if (!findAuth || findAuth.premission !== "shop") {
-        return res
-          .status(401)
-          .json({ message: "Usuário sem permissão para esta ação" });
-      }
-      await BankAccount.findOneAndUpdate({ _id: id }, { $set: { active } });
-      const bankAccount = await BankAccount.find().sort({ bank: 1 });
+      const bank = await knex("bankAccount")
+        .where({ id: id })
+        .update({ active })
+        .returning("*");
       return res
-        .status(200)
-        .json({ message: "Alteração realizada com sucesso", bankAccount });
+        .status(201)
+        .json({ message: "Conta bancária alterada com sucesso", bank });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
-        message: "Ocorreu um erro excluir a conta bancária",
+        message: "Ocorreu um erro ao bloquear/ativar a conta bancária",
         errorMessage,
       });
     }
