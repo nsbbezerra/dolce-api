@@ -17,8 +17,8 @@ const ColorsControllerShop = require("../app/controllers/Shop/ColorsController")
 const SizesControllerShop = require("../app/controllers/Shop/SizesController");
 const ImageColorsController = require("../app/controllers/Shop/ImageColorsController");
 const DetailsControllerShop = require("../app/controllers/Shop/DetailsControllerShop");
-const TestController = require("../app/controllers/Shop/TestController");
 const ProvidersController = require("../app/controllers/Shop/ProviderController");
+const PlanAccountsControllerShop = require("../app/controllers/Shop/PlanAccountsController");
 
 async function verifyToken(req, res, next) {
   const token = req.headers["x-access-token"];
@@ -193,6 +193,15 @@ router.get("/providers", ProvidersController.Show);
 router.put("/providers/:id", verifyToken, ProvidersController.Update);
 router.put("/providerActive/:id", verifyToken, ProvidersController.Active);
 
-router.post("/test", TestController.Test);
+/** PLANO DE CONTAS */
+
+router.get("/planAccount", PlanAccountsControllerShop.Show);
+router.post("/planAccount", verifyToken, PlanAccountsControllerShop.Store);
+router.put("/planAccount/:id", verifyToken, PlanAccountsControllerShop.Update);
+router.put(
+  "/planAccountActive/:id",
+  verifyToken,
+  PlanAccountsControllerShop.Active
+);
 
 module.exports = router;
