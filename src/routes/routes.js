@@ -19,6 +19,7 @@ const ImageColorsController = require("../app/controllers/Shop/ImageColorsContro
 const DetailsControllerShop = require("../app/controllers/Shop/DetailsControllerShop");
 const ProvidersController = require("../app/controllers/Shop/ProviderController");
 const PlanAccountsControllerShop = require("../app/controllers/Shop/PlanAccountsController");
+const PayFormControllerShop = require("../app/controllers/Shop/PayFormControllerShop");
 
 async function verifyToken(req, res, next) {
   const token = req.headers["x-access-token"];
@@ -202,6 +203,17 @@ router.put(
   "/planAccountActive/:id",
   verifyToken,
   PlanAccountsControllerShop.Active
+);
+
+/** FORMAS DE PAGAMENTO */
+
+router.get("/payForm", PayFormControllerShop.Show);
+router.post("/payForm", verifyToken, PayFormControllerShop.Store);
+router.put("/payForm/:id", verifyToken, PayFormControllerShop.Update);
+router.put(
+  "/showOnSitePayForm/:id",
+  verifyToken,
+  PayFormControllerShop.ShowOnSite
 );
 
 module.exports = router;
