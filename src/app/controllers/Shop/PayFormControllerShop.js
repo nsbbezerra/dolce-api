@@ -69,7 +69,6 @@ module.exports = {
       max_portion,
       interval_days,
       status,
-      show_on_site,
     } = req.body;
     const { id } = req.params;
 
@@ -83,7 +82,6 @@ module.exports = {
           max_portion,
           interval_days,
           status,
-          show_on_site,
         })
         .returning("*");
       return res

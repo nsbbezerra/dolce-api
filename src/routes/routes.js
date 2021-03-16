@@ -20,6 +20,7 @@ const DetailsControllerShop = require("../app/controllers/Shop/DetailsController
 const ProvidersController = require("../app/controllers/Shop/ProviderController");
 const PlanAccountsControllerShop = require("../app/controllers/Shop/PlanAccountsController");
 const PayFormControllerShop = require("../app/controllers/Shop/PayFormControllerShop");
+const ChecksController = require("../app/controllers/Shop/CheckController");
 
 async function verifyToken(req, res, next) {
   const token = req.headers["x-access-token"];
@@ -215,5 +216,12 @@ router.put(
   verifyToken,
   PayFormControllerShop.ShowOnSite
 );
+
+/** CHEQUES */
+
+router.post("/checks", verifyToken, ChecksController.Store);
+router.get("/checks", ChecksController.Show);
+router.put("/situation/:id", verifyToken, ChecksController.Situation);
+router.put("/stats/:id", verifyToken, ChecksController.Status);
 
 module.exports = router;
