@@ -221,6 +221,7 @@ router.put(
 
 router.post("/checks", verifyToken, ChecksController.Store);
 router.get("/checks", ChecksController.Show);
+router.delete("/checks/:id", verifyToken, ChecksController.Remove);
 router.put("/situation/:id", verifyToken, ChecksController.Situation);
 router.put("/stats/:id", verifyToken, ChecksController.Status);
 
