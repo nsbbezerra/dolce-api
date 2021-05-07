@@ -98,7 +98,10 @@ module.exports = {
         __dirname,
         "..",
         "..",
+        "..",
+        "..",
         "uploads",
+        "img",
         img.thumbnail
       );
       await RemoveImage(pathToImage);
