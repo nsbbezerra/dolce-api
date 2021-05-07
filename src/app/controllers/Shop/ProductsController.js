@@ -1,6 +1,16 @@
 const configs = require("../../../configs/configs");
 const knex = require("../../../database/pg");
-const azure = require("azure-storage");
+const fs = require("fs");
+const path = require("path");
+
+async function RemoveImage(url) {
+  fs.unlink(url, (err) => {
+    if (err) console.log(err);
+    else {
+      console.log();
+    }
+  });
+}
 
 module.exports = {
   async Store(req, res) {
@@ -42,8 +52,7 @@ module.exports = {
       freight_format,
       provider,
     } = req.body;
-    const { blobName } = req.file;
-    const url = `${configs.blobProducts}${blobName}`;
+    const { filename } = req.file;
     try {
       await knex("products").insert({
         departments_id,
@@ -81,8 +90,7 @@ module.exports = {
         freight_diameter,
         freight_length,
         freight_format,
-        thumbnail: url,
-        blobName,
+        thumbnail: filename,
         providers_id: provider,
       });
       return res
@@ -99,12 +107,12 @@ module.exports = {
 
   async Show(req, res) {
     try {
+      const imgUrl = configs.urlImage;
       const products = await knex
         .select([
           "products.id",
           "products.name",
           "products.thumbnail",
-          "products.blobName",
           "products.description",
           "products.sku",
           "products.barcode",
@@ -148,7 +156,7 @@ module.exports = {
         .innerJoin("departments", "departments.id", "products.departments_id")
         .innerJoin("categories", "categories.id", "products.categories_id");
 
-      return res.status(201).json(products);
+      return res.status(201).json({ products, imgUrl });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
@@ -175,45 +183,23 @@ module.exports = {
 
   async UpdateImage(req, res) {
     const { id } = req.params;
-    const { blobName } = req.file;
+    const { filename } = req.file;
     try {
-      const url = `${configs.blobProducts}${blobName}`;
-      const azureBlobService = azure.createBlobService();
-      const product = await knex("products")
-        .select("id", "blobName")
-        .where({ id: id })
-        .first();
-      await azureBlobService.deleteBlobIfExists(
-        "products",
-        product.blobName,
-        async function (error, result, response) {
-          if (!error) {
-            if (result === true) {
-              await knex("products").where({ id: id }).update({
-                thumbnail: url,
-                blobName: blobName,
-              });
-              return res.status(201).json({
-                message: "Imagem alterada com sucesso",
-                url,
-                blobName,
-              });
-            } else {
-              const errorMessage = "Blob service not response";
-              return res.status(400).json({
-                message: "Ocorreu um erro ao substituir a imagem",
-                errorMessage,
-              });
-            }
-          } else {
-            const errorMessage = error.message;
-            return res.status(400).json({
-              message: "Ocorreu um erro ao substituir a imagem",
-              errorMessage,
-            });
-          }
-        }
+      const findProduct = await knex("products").where({ id: id }).first();
+      const pathToImage = path.resolve(
+        __dirname,
+        "..",
+        "..",
+        "uploads",
+        findProduct.thumbnail
       );
+      await RemoveImage(pathToImage);
+      const imgUrl = configs.urlImage;
+      const product = await knex("products")
+        .where({ id: id })
+        .update({ thumbnail: filename })
+        .returning("*");
+      return res.status(201).json({ imgUrl, product });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
@@ -312,11 +298,11 @@ module.exports = {
 
   async SetPromotional(req, res) {
     const { id } = req.params;
-    const { promotional, promotional_value } = req.body;
+    const { promotional, promotional_value, promotional_rate } = req.body;
     try {
       const product = await knex("products")
         .where({ id: id })
-        .update({ promotional, promotional_value })
+        .update({ promotional, promotional_value, promotional_rate })
         .returning("*");
       return res
         .status(201)

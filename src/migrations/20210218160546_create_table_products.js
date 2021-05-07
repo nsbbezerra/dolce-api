@@ -1,6 +1,7 @@
 exports.up = function (knex) {
   return knex.schema.createTable("products", function (table) {
     table.increments("id");
+    table.string("identify");
     table
       .integer("departments_id")
       .references("departments.id")
@@ -9,6 +10,11 @@ exports.up = function (knex) {
     table
       .integer("categories_id")
       .references("categories.id")
+      .notNullable()
+      .onDelete("CASCADE");
+    table
+      .integer("providers_id")
+      .references("providers.id")
       .notNullable()
       .onDelete("CASCADE");
     table.string("provider_code");
@@ -45,8 +51,8 @@ exports.up = function (knex) {
     table.decimal("sale_value", 8, 2);
     table.boolean("promotional").notNullable().defaultTo(false);
     table.decimal("promotional_value", 8, 2);
+    table.decimal("promotional_rate", 8, 2);
     table.string("thumbnail");
-    table.string("blobName");
     table.enu("code_freight", ["04014", "04510", "40290"]);
     table.decimal("freight_weight", 5, 2);
     table.decimal("freight_width", 5, 2);

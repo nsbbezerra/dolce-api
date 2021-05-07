@@ -82,19 +82,8 @@ router.put("/activeclient/:id", verifyToken, ClientControllerShop.Active);
 router.put("/restrictclient/:id", verifyToken, ClientControllerShop.Restrict);
 
 /** DEPARTAMENTOS SHOP */
-router.post(
-  "/departments",
-  multer(uploaderConfig.azureDepartmentsImage).single("thumbnail"),
-  verifyToken,
-  DepartmentsControllerShop.Store
-);
+router.post("/departments", verifyToken, DepartmentsControllerShop.Store);
 router.get("/departments", DepartmentsControllerShop.Show);
-router.put(
-  "/departmentsChangeImage/:id",
-  multer(uploaderConfig.azureDepartmentsImage).single("thumbnail"),
-  verifyToken,
-  DepartmentsControllerShop.UpdateImage
-);
 router.put("/departments/:id", verifyToken, DepartmentsControllerShop.Update);
 router.put(
   "/activeDepartment/:id",
@@ -103,19 +92,8 @@ router.put(
 );
 
 /** CATEGORIAS SHOP */
-router.post(
-  "/categories",
-  multer(uploaderConfig.azureCategoriesImage).single("thumbnail"),
-  verifyToken,
-  CategoriesControllerShop.Store
-);
+router.post("/categories", verifyToken, CategoriesControllerShop.Store);
 router.get("/categories", CategoriesControllerShop.Show);
-router.put(
-  "/categoryChangeImage/:id",
-  multer(uploaderConfig.azureCategoriesImage).single("thumbnail"),
-  verifyToken,
-  CategoriesControllerShop.UpdateImage
-);
 router.put("/categories/:id", verifyToken, CategoriesControllerShop.Update);
 router.put("/activeCategory/:id", verifyToken, CategoriesControllerShop.Active);
 
@@ -124,13 +102,13 @@ router.get("/products", ProductControllerShop.Show);
 router.get("/findDependents", ProductControllerShop.FindAllDependets);
 router.post(
   "/products",
-  multer(uploaderConfig.azureProductsImage).single("thumbnail"),
+  multer(uploaderConfig.storageImg).single("thumbnail"),
   verifyToken,
   ProductControllerShop.Store
 );
 router.put(
   "/productChangeImage/:id",
-  multer(uploaderConfig.azureProductsImage).single("thumbnail"),
+  multer(uploaderConfig.storageImg).single("thumbnail"),
   verifyToken,
   ProductControllerShop.UpdateImage
 );
@@ -164,7 +142,7 @@ router.get("/findSizeByProduct/:product", SizesControllerShop.FindByProducts);
 router.get("/imageColors", ImageColorsController.Show);
 router.post(
   "/imageColors",
-  multer(uploaderConfig.azureColorsImage).single("image"),
+  multer(uploaderConfig.storageImg).single("image"),
   verifyToken,
   ImageColorsController.Store
 );
@@ -179,15 +157,9 @@ router.put("/details/:id", verifyToken, DetailsControllerShop.Update);
 router.delete("/details/:id", verifyToken, DetailsControllerShop.Remove);
 
 /** ROTA PARA OS FORNECEDORES */
-router.post(
-  "/providers",
-  multer(uploaderConfig.azureProvidersImage).single("thumbnail"),
-  verifyToken,
-  ProvidersController.Store
-);
+router.post("/providers", verifyToken, ProvidersController.Store);
 router.put(
   "/changeProviderImage/:id",
-  multer(uploaderConfig.azureProvidersImage).single("thumbnail"),
   verifyToken,
   ProvidersController.UpdateImage
 );

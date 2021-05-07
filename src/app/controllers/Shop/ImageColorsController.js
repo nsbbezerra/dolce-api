@@ -1,20 +1,28 @@
 const knex = require("../../../database/pg");
 const config = require("../../../configs/configs");
-const azure = require("azure-storage");
+const fs = require("fs");
+const path = require("path");
+
+async function RemoveImage(url) {
+  fs.unlink(url, (err) => {
+    if (err) console.log(err);
+    else {
+      console.log();
+    }
+  });
+}
 
 module.exports = {
   async Store(req, res) {
     const { product, color, name, hex } = req.body;
-    const { blobName } = req.file;
-    const url = `${config.blobColors}${blobName}`;
+    const { filename } = req.file;
     try {
       await knex("colorsImages").insert({
         products_id: product,
         colors_id: color,
         name,
         hex,
-        image: url,
-        blobName,
+        image: filename,
       });
       return res.status(201).json({ message: "Imagem cadastrada com suceso" });
     } catch (error) {
@@ -42,6 +50,7 @@ module.exports = {
   async Find(req, res) {
     const { color } = req.params;
     try {
+      const imgUrl = config.urlImage;
       const sizes = await knex
         .select("*")
         .from("colors")
@@ -52,7 +61,7 @@ module.exports = {
           );
         })
         .orderBy("colors_id");
-      return res.status(201).json(sizes);
+      return res.status(201).json({ sizes, imgUrl });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
@@ -81,38 +90,20 @@ module.exports = {
   async Remove(req, res) {
     const { id } = req.params;
     try {
-      const azureBlobService = azure.createBlobService();
       const img = await knex("colorsImages")
-        .select("id", "blobName")
+        .select("id", "thumbnail")
         .where({ id: id })
         .first();
-
-      await azureBlobService.deleteBlobIfExists(
-        "colors",
-        img.blobName,
-        async function (error, result, response) {
-          if (!error) {
-            if (result === true) {
-              await knex("colorsImages").where({ id: id }).del();
-              return res
-                .status(201)
-                .json({ message: "Imagem removida com sucesso" });
-            } else {
-              const errorMessage = "Blob service not response";
-              return res.status(400).json({
-                message: "Ocorreu um erro ao substituir a imagem",
-                errorMessage,
-              });
-            }
-          } else {
-            const errorMessage = error.message;
-            return res.status(400).json({
-              message: "Ocorreu um erro ao remover a imagem",
-              errorMessage,
-            });
-          }
-        }
+      const pathToImage = path.resolve(
+        __dirname,
+        "..",
+        "..",
+        "uploads",
+        img.thumbnail
       );
+      await RemoveImage(pathToImage);
+      await knex("colorsImages").where({ id: id }).del();
+      return res.status(201).json({ message: "Imagem excluída com sucesso" });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
