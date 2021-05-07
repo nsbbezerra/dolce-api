@@ -1,7 +1,7 @@
-const configs = require("../../../configs/configs");
 const knex = require("../../../database/pg");
 const fs = require("fs");
 const path = require("path");
+const uniqid = require("uniqid");
 
 async function RemoveImage(url) {
   fs.unlink(url, (err) => {
@@ -58,6 +58,7 @@ module.exports = {
         departments_id,
         categories_id,
         name,
+        identify: uniqid("produto-"),
         description,
         sku,
         barcode,
@@ -107,7 +108,6 @@ module.exports = {
 
   async Show(req, res) {
     try {
-      const imgUrl = configs.urlImage;
       const products = await knex
         .select([
           "products.id",
@@ -156,7 +156,7 @@ module.exports = {
         .innerJoin("departments", "departments.id", "products.departments_id")
         .innerJoin("categories", "categories.id", "products.categories_id");
 
-      return res.status(201).json({ products, imgUrl });
+      return res.status(201).json(products);
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
@@ -190,16 +190,18 @@ module.exports = {
         __dirname,
         "..",
         "..",
+        "..",
+        "..",
         "uploads",
+        "img",
         findProduct.thumbnail
       );
       await RemoveImage(pathToImage);
-      const imgUrl = configs.urlImage;
       const product = await knex("products")
         .where({ id: id })
         .update({ thumbnail: filename })
         .returning("*");
-      return res.status(201).json({ imgUrl, product });
+      return res.status(201).json(product);
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({

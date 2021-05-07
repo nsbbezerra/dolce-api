@@ -43,20 +43,9 @@ router.put("/address/:id", verifyToken, AddressesController.Edit); //Editar um E
 router.delete("/address/:id", verifyToken, AddressesController.Remove); //Remover um Endereço
 
 /** ROTAS PARA AS CONTAS BANCARIAS */
-router.post(
-  "/accountbank",
-  multer(uploaderConfig.azureBankImage).single("thumbnail"),
-  verifyToken,
-  BankAccountController.Store
-);
+router.post("/accountbank", verifyToken, BankAccountController.Store);
 router.get("/accountbank", BankAccountController.Show);
 router.put("/accountbank/:id", verifyToken, BankAccountController.Update);
-router.put(
-  "/imagebankaccount/:id",
-  multer(uploaderConfig.azureBankImage).single("thumbnail"),
-  verifyToken,
-  BankAccountController.UpdateImage
-);
 router.put("/activebankaccount/:id", verifyToken, BankAccountController.Active);
 
 /** ROTAS PARA FUNCIONÁRIOS */
@@ -102,13 +91,13 @@ router.get("/products", ProductControllerShop.Show);
 router.get("/findDependents", ProductControllerShop.FindAllDependets);
 router.post(
   "/products",
-  multer(uploaderConfig.storageImg).single("thumbnail"),
+  multer(uploaderConfig.img).single("thumbnail"),
   verifyToken,
   ProductControllerShop.Store
 );
 router.put(
   "/productChangeImage/:id",
-  multer(uploaderConfig.storageImg).single("thumbnail"),
+  multer(uploaderConfig.img).single("thumbnail"),
   verifyToken,
   ProductControllerShop.UpdateImage
 );
@@ -142,7 +131,7 @@ router.get("/findSizeByProduct/:product", SizesControllerShop.FindByProducts);
 router.get("/imageColors", ImageColorsController.Show);
 router.post(
   "/imageColors",
-  multer(uploaderConfig.storageImg).single("image"),
+  multer(uploaderConfig.img).single("image"),
   verifyToken,
   ImageColorsController.Store
 );
@@ -157,9 +146,15 @@ router.put("/details/:id", verifyToken, DetailsControllerShop.Update);
 router.delete("/details/:id", verifyToken, DetailsControllerShop.Remove);
 
 /** ROTA PARA OS FORNECEDORES */
-router.post("/providers", verifyToken, ProvidersController.Store);
+router.post(
+  "/providers",
+  multer(uploaderConfig.img).single("thumbnail"),
+  verifyToken,
+  ProvidersController.Store
+);
 router.put(
   "/changeProviderImage/:id",
+  multer(uploaderConfig.img).single("thumbnail"),
   verifyToken,
   ProvidersController.UpdateImage
 );

@@ -1,6 +1,4 @@
 const knex = require("../../../database/pg");
-const configs = require("../../../configs/configs");
-const azure = require("azure-storage");
 
 module.exports = {
   async Store(req, res) {
@@ -13,8 +11,6 @@ module.exports = {
       operation,
       amount,
     } = req.body;
-    const { blobName } = req.file;
-    const url = `${configs.blobBank}${blobName}`;
 
     try {
       await knex("bankAccount").insert({
@@ -25,8 +21,6 @@ module.exports = {
         variation,
         operation,
         amount,
-        thumbnail: url,
-        blobName,
       });
       return res
         .status(201)
@@ -77,58 +71,6 @@ module.exports = {
       const errorMessage = error.message;
       return res.status(400).json({
         message: "Ocorreu um erro ao editar a conta bancária",
-        errorMessage,
-      });
-    }
-  },
-
-  async UpdateImage(req, res) {
-    const { id } = req.params;
-    const { blobName } = req.file;
-
-    try {
-      const url = `${configs.blobBank}${blobName}`;
-      const azureBlobService = azure.createBlobService();
-      const bank = await knex("bankAccount")
-        .select("id", "blobName")
-        .where({ id: id })
-        .first();
-
-      await azureBlobService.deleteBlobIfExists(
-        "bank",
-        bank.blobName,
-        async function (error, result, response) {
-          if (!error) {
-            if (result === true) {
-              await knex("bankAccount").where({ id: id }).update({
-                thumbnail: url,
-                blobName: blobName,
-              });
-              return res.status(201).json({
-                message: "Imagem alterada com sucesso",
-                url,
-                blobName,
-              });
-            } else {
-              const errorMessage = "Blob service not response";
-              return res.status(400).json({
-                message: "Ocorreu um erro ao substituir a imagem",
-                errorMessage,
-              });
-            }
-          } else {
-            const errorMessage = error.message;
-            return res.status(400).json({
-              message: "Ocorreu um erro ao substituir a imagem",
-              errorMessage,
-            });
-          }
-        }
-      );
-    } catch (error) {
-      const errorMessage = error.message;
-      return res.status(400).json({
-        message: "Ocorreu um erro ao alterar a imagem da conta bancária",
         errorMessage,
       });
     }

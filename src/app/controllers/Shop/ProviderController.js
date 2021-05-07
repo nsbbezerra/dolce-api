@@ -1,6 +1,16 @@
 const knex = require("../../../database/pg");
-const configs = require("../../../configs/configs");
-const azure = require("azure-storage");
+const config = require("../../../configs/configs");
+const path = require("path");
+const fs = require("fs");
+
+async function RemoveImage(url) {
+  fs.unlink(url, (err) => {
+    if (err) console.log(err);
+    else {
+      console.log();
+    }
+  });
+}
 
 module.exports = {
   async Store(req, res) {
@@ -17,8 +27,7 @@ module.exports = {
       cep,
       state,
     } = req.body;
-    const { blobName } = req.file;
-    const url = `${configs.blobProvider}${blobName}`;
+    const { filename } = req.file;
     try {
       await knex("providers").insert({
         name,
@@ -32,8 +41,7 @@ module.exports = {
         city,
         cep,
         state,
-        thumbnail: url,
-        blobName,
+        thumbnail: filename,
       });
       return res
         .status(201)
@@ -122,45 +130,29 @@ module.exports = {
 
   async UpdateImage(req, res) {
     const { id } = req.params;
-    const { blobName } = req.file;
-    const url = `${configs.blobProvider}${blobName}`;
+    const { filename } = req.file;
+
     try {
-      const azureBlobService = azure.createBlobService();
+      const imgUrl = config.urlImage;
       const provider = await knex("providers")
-        .select("id", "blobName")
+        .select("id", "thumbnail")
         .where({ id: id })
         .first();
-      await azureBlobService.deleteBlobIfExists(
-        "providers",
-        provider.blobName,
-        async function (error, result, response) {
-          if (!error) {
-            if (result === true) {
-              await knex("providers").where({ id: id }).update({
-                thumbnail: url,
-                blobName: blobName,
-              });
-              return res.status(201).json({
-                message: "Imagem alterada com sucesso",
-                url,
-                blobName,
-              });
-            } else {
-              const errorMessage = "Blob service not response";
-              return res.status(400).json({
-                message: "Ocorreu um erro ao substituir a imagem",
-                errorMessage,
-              });
-            }
-          } else {
-            const errorMessage = error.message;
-            return res.status(400).json({
-              message: "Ocorreu um erro ao substituir a imagem",
-              errorMessage,
-            });
-          }
-        }
+      const pathToImage = path.resolve(
+        __dirname,
+        "..",
+        "..",
+        "uploads",
+        provider.thumbnail
       );
+      await RemoveImage(pathToImage);
+      const newProvider = await knex("providers")
+        .where({ id: id })
+        .update({ thumbnail: filename })
+        .returning("*");
+      return res
+        .status(201)
+        .json({ imgUrl, newProvider, message: "Imagem alterada com sucesso" });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
