@@ -144,6 +144,7 @@ module.exports = {
         "..",
         "..",
         "..",
+        "..",
         "uploads",
         "img",
         provider.thumbnail

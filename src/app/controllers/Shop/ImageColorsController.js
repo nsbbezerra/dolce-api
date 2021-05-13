@@ -50,18 +50,11 @@ module.exports = {
   async Find(req, res) {
     const { color } = req.params;
     try {
-      const imgUrl = config.urlImage;
       const sizes = await knex
         .select("*")
-        .from("colors")
-        .join("colorsImages", function () {
-          this.on("colors.id", "=", "colorsImages.colors_id").onIn(
-            "colorsImages.products_id",
-            color
-          );
-        })
-        .orderBy("colors_id");
-      return res.status(201).json({ sizes, imgUrl });
+        .from("colorsImages")
+        .where({ colors_id: color });
+      return res.status(201).json(sizes);
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
@@ -91,7 +84,7 @@ module.exports = {
     const { id } = req.params;
     try {
       const img = await knex("colorsImages")
-        .select("id", "thumbnail")
+        .select("id", "image")
         .where({ id: id })
         .first();
       const pathToImage = path.resolve(
@@ -100,9 +93,10 @@ module.exports = {
         "..",
         "..",
         "..",
+        "..",
         "uploads",
         "img",
-        img.thumbnail
+        img.image
       );
       await RemoveImage(pathToImage);
       await knex("colorsImages").where({ id: id }).del();

@@ -146,6 +146,7 @@ module.exports = {
           "products.rating",
           "products.promotional",
           "products.promotional_value",
+          "products.promotional_rate",
           "products.active",
           "departments.name as dep_name",
           "categories.name as cat_name",
@@ -154,7 +155,8 @@ module.exports = {
         ])
         .from("products")
         .innerJoin("departments", "departments.id", "products.departments_id")
-        .innerJoin("categories", "categories.id", "products.categories_id");
+        .innerJoin("categories", "categories.id", "products.categories_id")
+        .orderBy("name");
 
       return res.status(201).json(products);
     } catch (error) {
@@ -188,6 +190,7 @@ module.exports = {
       const findProduct = await knex("products").where({ id: id }).first();
       const pathToImage = path.resolve(
         __dirname,
+        "..",
         "..",
         "..",
         "..",

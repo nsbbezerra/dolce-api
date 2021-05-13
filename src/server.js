@@ -15,15 +15,15 @@ app.use(cors());
 app.use(routes);
 app.use(
   "/imagem",
-  express.static(path.resolve(__dirname, "..", "uploads", "img"))
+  express.static(path.resolve(__dirname, "..", "..", "uploads", "img"))
 );
 app.use(
   "/documentos",
-  express.static(path.resolve(__dirname, "..", "uploads", "docs"))
+  express.static(path.resolve(__dirname, "..", "..", "uploads", "docs"))
 );
 app.use(
   "/comprovantes",
-  express.static(path.resolve(__dirname, "..", "uploads", "receipt"))
+  express.static(path.resolve(__dirname, "..", "..", "uploads", "receipt"))
 );
 
 const port = process.env.PORT || 3333;

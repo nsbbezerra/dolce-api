@@ -3,7 +3,7 @@ const path = require("path");
 
 const img = {
   storage: multer.diskStorage({
-    destination: path.resolve(__dirname, "..", "..", "uploads", "img"),
+    destination: path.resolve(__dirname, "..", "..", "..", "uploads", "img"),
     filename: (req, file, cb) => {
       console.log(file);
       let fileName = file.originalname;
@@ -17,7 +17,7 @@ const img = {
 
 const docs = {
   storage: multer.diskStorage({
-    destination: path.resolve(__dirname, "..", "..", "uploads", "docs"),
+    destination: path.resolve(__dirname, "..", "..", "..", "uploads", "docs"),
     filename: (req, file, cb) => {
       console.log(file);
       let fileName = file.originalname;
