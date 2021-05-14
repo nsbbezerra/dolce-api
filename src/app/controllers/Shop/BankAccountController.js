@@ -1,17 +1,21 @@
 const knex = require("../../../database/pg");
+const path = require("path");
+const fs = require("fs");
+
+async function RemoveImage(url) {
+  fs.unlink(url, (err) => {
+    if (err) console.log(err);
+    else {
+      console.log();
+    }
+  });
+}
 
 module.exports = {
   async Store(req, res) {
-    const {
-      bank,
-      mode,
-      agency,
-      account,
-      variation,
-      operation,
-      amount,
-    } = req.body;
-
+    const { bank, mode, agency, account, variation, operation, amount } =
+      req.body;
+    const { filename } = req.file;
     try {
       await knex("bankAccount").insert({
         bank,
@@ -21,6 +25,7 @@ module.exports = {
         variation,
         operation,
         amount,
+        thumbnail: filename,
       });
       return res
         .status(201)
@@ -48,15 +53,8 @@ module.exports = {
   },
 
   async Update(req, res) {
-    const {
-      bank,
-      mode,
-      agency,
-      account,
-      variation,
-      operation,
-      amount,
-    } = req.body;
+    const { bank, mode, agency, account, variation, operation, amount } =
+      req.body;
     const { id } = req.params;
 
     try {
@@ -92,6 +90,38 @@ module.exports = {
       const errorMessage = error.message;
       return res.status(400).json({
         message: "Ocorreu um erro ao bloquear/ativar a conta bancária",
+        errorMessage,
+      });
+    }
+  },
+
+  async UpdateImage(req, res) {
+    const { id } = req.params;
+    const { filename } = req.file;
+
+    try {
+      const find = await knex("bankAccount").where({ id: id }).first();
+      const pathToImage = path.resolve(
+        __dirname,
+        "..",
+        "..",
+        "..",
+        "..",
+        "..",
+        "uploads",
+        "img",
+        find.thumbnail
+      );
+      await RemoveImage(pathToImage);
+      const newImage = await knex("bankAccount")
+        .where({ id: id })
+        .update({ thumbnail: filename })
+        .returning("*");
+      return res.status(200).json(newImage);
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao alterar a imagem da conta bancária",
         errorMessage,
       });
     }

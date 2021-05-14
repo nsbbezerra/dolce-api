@@ -21,6 +21,7 @@ const ProvidersController = require("../app/controllers/Shop/ProviderController"
 const PlanAccountsControllerShop = require("../app/controllers/Shop/PlanAccountsController");
 const PayFormControllerShop = require("../app/controllers/Shop/PayFormControllerShop");
 const ChecksController = require("../app/controllers/Shop/CheckController");
+const PixController = require("../app/controllers/Shop/PixController");
 
 async function verifyToken(req, res, next) {
   const token = req.headers["x-access-token"];
@@ -43,10 +44,21 @@ router.put("/address/:id", verifyToken, AddressesController.Edit); //Editar um E
 router.delete("/address/:id", verifyToken, AddressesController.Remove); //Remover um Endereço
 
 /** ROTAS PARA AS CONTAS BANCARIAS */
-router.post("/accountbank", verifyToken, BankAccountController.Store);
+router.post(
+  "/accountbank",
+  multer(uploaderConfig.img).single("thumbnail"),
+  verifyToken,
+  BankAccountController.Store
+);
 router.get("/accountbank", BankAccountController.Show);
 router.put("/accountbank/:id", verifyToken, BankAccountController.Update);
 router.put("/activebankaccount/:id", verifyToken, BankAccountController.Active);
+router.put(
+  "/imagebankaccount/:id",
+  multer(uploaderConfig.img).single("thumbnail"),
+  verifyToken,
+  BankAccountController.UpdateImage
+);
 
 /** ROTAS PARA FUNCIONÁRIOS */
 router.post("/employee", verifyToken, EmployeeController.Store);
@@ -191,5 +203,10 @@ router.get("/checks", ChecksController.Show);
 router.delete("/checks/:id", verifyToken, ChecksController.Remove);
 router.put("/situation/:id", verifyToken, ChecksController.Situation);
 router.put("/stats/:id", verifyToken, ChecksController.Status);
+
+/** PIX */
+router.post("/pix", verifyToken, PixController.Store);
+router.delete("/pix/:id", verifyToken, PixController.Remove);
+router.get("/pix", PixController.Show);
 
 module.exports = router;
