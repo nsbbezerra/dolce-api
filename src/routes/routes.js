@@ -22,6 +22,7 @@ const PlanAccountsControllerShop = require("../app/controllers/Shop/PlanAccounts
 const PayFormControllerShop = require("../app/controllers/Shop/PayFormControllerShop");
 const ChecksController = require("../app/controllers/Shop/CheckController");
 const PixController = require("../app/controllers/Shop/PixController");
+const ExpensesController = require("../app/controllers/Shop/ExpensesController");
 
 async function verifyToken(req, res, next) {
   const token = req.headers["x-access-token"];
@@ -208,5 +209,9 @@ router.put("/stats/:id", verifyToken, ChecksController.Status);
 router.post("/pix", verifyToken, PixController.Store);
 router.delete("/pix/:id", verifyToken, PixController.Remove);
 router.get("/pix", PixController.Show);
+
+/** CONTAS A PAGAR */
+router.get("/expensesDependets", ExpensesController.Dependents);
+router.post("/expenses", verifyToken, ExpensesController.Store);
 
 module.exports = router;
