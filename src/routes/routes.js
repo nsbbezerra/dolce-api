@@ -213,5 +213,6 @@ router.get("/pix", PixController.Show);
 /** CONTAS A PAGAR */
 router.get("/expensesDependets", ExpensesController.Dependents);
 router.post("/expenses", verifyToken, ExpensesController.Store);
+router.get("/expenses/:find", ExpensesController.Find);
 
 module.exports = router;

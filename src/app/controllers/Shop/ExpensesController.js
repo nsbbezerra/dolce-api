@@ -60,7 +60,37 @@ module.exports = {
     const { find } = req.params;
 
     try {
-      s;
+      const date = new Date();
+
+      if (find === "1") {
+        const expenses = await knex
+          .select([
+            "expenses.id",
+            "expenses.identify",
+            "expenses.month",
+            "expenses.year",
+            "expenses.movimentation",
+            "expenses.status",
+            "expenses.value",
+            "expenses.description",
+            "expenses.due_date",
+            "payForm.name as pay_form_name",
+            "planAccounts.name as plan_accounts_name",
+          ])
+          .from("expenses")
+          .where({
+            month: date.toLocaleString("pt-BR", { month: "long" }),
+            year: date.getFullYear().toString(),
+          })
+          .innerJoin("payForm", "payForm.id", "expenses.payForm_id")
+          .innerJoin(
+            "planAccounts",
+            "planAccounts.id",
+            "expenses.planAccounts_id"
+          );
+
+        return res.status(200).json(expenses);
+      }
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
