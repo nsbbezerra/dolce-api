@@ -17,6 +17,8 @@ exports.up = function (knex) {
     table.enu("status", ["cancel", "waiting", "done"]).notNullable();
     table.enu("movimentation", ["cancel", "waiting", "done"]).notNullable();
     table.string("description");
+    table.string("month").notNullable();
+    table.string("year").notNullable();
     table.timestamp("created_at").defaultTo(knex.fn.now());
     table.timestamp("updated_at").defaultTo(knex.fn.now());
   });

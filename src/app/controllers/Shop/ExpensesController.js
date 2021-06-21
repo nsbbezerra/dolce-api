@@ -30,6 +30,8 @@ module.exports = {
       description,
     } = req.body;
     try {
+      const date = new Date(due_date);
+
       await knex("expenses").insert({
         payForm_id,
         planAccounts_id,
@@ -39,6 +41,8 @@ module.exports = {
         status,
         movimentation,
         description,
+        month: date.toLocaleString("pt-BR", { month: "long" }),
+        year: date.getFullYear().toString(),
       });
       return res
         .status(201)
