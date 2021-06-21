@@ -55,4 +55,18 @@ module.exports = {
       });
     }
   },
+
+  async Find(req, res) {
+    const { find } = req.params;
+
+    try {
+      s;
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao buscar as informações",
+        errorMessage,
+      });
+    }
+  },
 };
