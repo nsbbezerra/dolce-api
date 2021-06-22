@@ -213,6 +213,18 @@ router.get("/pix", PixController.Show);
 /** CONTAS A PAGAR */
 router.get("/expensesDependets", ExpensesController.Dependents);
 router.post("/expenses", verifyToken, ExpensesController.Store);
-router.get("/expenses/:find", ExpensesController.Find);
+router.get("/expenses/:find/:init/:final", ExpensesController.Find);
+router.put("/expenses/:id", verifyToken, ExpensesController.UpdateInfo);
+router.put(
+  "/expenseChangeStatus/:id",
+  verifyToken,
+  ExpensesController.UpdateStatus
+);
+router.put(
+  "/expenseChangeMovimentation/:id",
+  verifyToken,
+  ExpensesController.UpdateMovimentation
+);
+router.delete("/expenses/:id", verifyToken, ExpensesController.Remove);
 
 module.exports = router;
