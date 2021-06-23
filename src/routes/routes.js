@@ -23,6 +23,7 @@ const PayFormControllerShop = require("../app/controllers/Shop/PayFormController
 const ChecksController = require("../app/controllers/Shop/CheckController");
 const PixController = require("../app/controllers/Shop/PixController");
 const ExpensesController = require("../app/controllers/Shop/ExpensesController");
+const RevenuesController = require("../app/controllers/Shop/RevenuesController");
 
 async function verifyToken(req, res, next) {
   const token = req.headers["x-access-token"];
@@ -226,5 +227,22 @@ router.put(
   ExpensesController.UpdateMovimentation
 );
 router.delete("/expenses/:id", verifyToken, ExpensesController.Remove);
+
+/** CONTAS A RECEBER */
+router.get("/revenuesDependets", RevenuesController.Dependents);
+router.post("/revenues", verifyToken, RevenuesController.Store);
+router.get("/revenues/:find/:init/:final", RevenuesController.Find);
+router.put("/revenues/:id", verifyToken, RevenuesController.UpdateInfo);
+router.put(
+  "/revenueChangeStatus/:id",
+  verifyToken,
+  RevenuesController.UpdateStatus
+);
+router.put(
+  "/revenueChangeMovimentation/:id",
+  verifyToken,
+  RevenuesController.UpdateMovimentation
+);
+router.delete("/revenues/:id", verifyToken, RevenuesController.Remove);
 
 module.exports = router;
