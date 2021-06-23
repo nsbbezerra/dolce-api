@@ -48,6 +48,7 @@ exports.up = function (knex) {
       "correios",
       "shipping_company",
     ]);
+    table.string("receipt");
     table.timestamp("created_at").defaultTo(knex.fn.now());
     table.timestamp("updated_at").defaultTo(knex.fn.now());
   });
