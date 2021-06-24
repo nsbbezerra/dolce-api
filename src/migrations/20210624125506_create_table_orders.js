@@ -7,6 +7,11 @@ exports.up = function (knex) {
       .notNullable()
       .onDelete("CASCADE");
     table
+      .integer("cashier_id")
+      .references("cashier.id")
+      .notNullable()
+      .onDelete("CASCADE");
+    table
       .integer("employee_id")
       .references("employees.id")
       .notNullable()
