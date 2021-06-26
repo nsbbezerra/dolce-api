@@ -16,6 +16,7 @@ module.exports = {
       });
       return res.status(201).json({ message: "Caixa aberto!" });
     } catch (error) {
+      console.log(error);
       const errorMessage = error.message;
       return res.status(400).json({
         message: "Ocorreu um erro ao abrir o caixa",
