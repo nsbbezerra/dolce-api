@@ -25,6 +25,8 @@ exports.up = function (knex) {
     table.decimal("value", 8, 2);
     table.date("date_mov");
     table.date("due_date");
+    table.string("month").notNullable();
+    table.string("year").notNullable();
     table.enu("status", ["waiting", "canceled", "paid_out"]);
     table.timestamp("created_at").defaultTo(knex.fn.now());
     table.timestamp("updated_at").defaultTo(knex.fn.now());

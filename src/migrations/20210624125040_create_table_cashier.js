@@ -14,6 +14,8 @@ exports.up = function (knex) {
       .defaultTo("open");
     table.date("open_date");
     table.date("close_date");
+    table.string("month").notNullable();
+    table.string("year").notNullable();
     table.timestamp("created_at").defaultTo(knex.fn.now());
     table.timestamp("updated_at").defaultTo(knex.fn.now());
   });

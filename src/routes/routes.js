@@ -9,6 +9,7 @@ const AddressesController = require("../app/controllers/Shop/AddressController")
 const BankAccountController = require("../app/controllers/Shop/BankAccountController");
 const EmployeeController = require("../app/controllers/Shop/EmployeeController");
 const CashHandlingController = require("../app/controllers/Shop/CashHandlingController");
+const CashierController = require("../app/controllers/Shop/CashierController");
 const ClientControllerShop = require("../app/controllers/Shop/ClientsController");
 const DepartmentsControllerShop = require("../app/controllers/Shop/DepartmentsController");
 const CategoriesControllerShop = require("../app/controllers/Shop/CategoriesController");
@@ -72,10 +73,6 @@ router.put("/geremployee/:id", verifyToken, EmployeeController.Permissions);
 router.put("/comission/:id", verifyToken, EmployeeController.Comission);
 
 /** MOVIMENTAÇÃO DE CAIXA */
-router.post("/cashhandling", verifyToken, CashHandlingController.Stores);
-router.get("/cashhandling/:cashier", verifyToken, CashHandlingController.Index);
-router.put("/cashhandling/:id", verifyToken, CashHandlingController.Edit);
-router.delete("/cashhandling/:id", verifyToken, CashHandlingController.Remove);
 
 /** CLIENTES SHOP */
 router.post("/clients", verifyToken, ClientControllerShop.Store);
@@ -244,5 +241,8 @@ router.put(
   RevenuesController.UpdateMovimentation
 );
 router.delete("/revenues/:id", verifyToken, RevenuesController.Remove);
+
+/** CAIXA */
+router.get("/cashier/:find/:init/:final", CashierController.Find);
 
 module.exports = router;

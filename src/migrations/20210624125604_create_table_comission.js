@@ -12,6 +12,8 @@ exports.up = function (knex) {
       .notNullable()
       .onDelete("CASCADE");
     table.decimal("value", 8, 2);
+    table.string("month").notNullable();
+    table.string("year").notNullable();
     table.timestamp("created_at").defaultTo(knex.fn.now());
     table.timestamp("updated_at").defaultTo(knex.fn.now());
   });
