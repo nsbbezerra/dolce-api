@@ -55,7 +55,8 @@ exports.up = function (knex) {
     table.decimal("freight_diameter", 5, 2);
     table.decimal("freight_length", 5, 2);
     table.enu("freight_format", ["1", "2", "3"]);
-
+    table.string("information").notNullable();
+    table.json("list");
     table.timestamp("created_at").defaultTo(knex.fn.now());
     table.timestamp("updated_at").defaultTo(knex.fn.now());
   });

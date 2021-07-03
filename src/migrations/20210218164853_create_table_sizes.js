@@ -6,11 +6,6 @@ exports.up = function (knex) {
       .references("products.id")
       .notNullable()
       .onDelete("CASCADE");
-    table
-      .integer("colors_id")
-      .references("colors.id")
-      .notNullable()
-      .onDelete("CASCADE");
     table.string("size").notNullable();
     table.integer("amount").notNullable();
     table.timestamp("created_at").defaultTo(knex.fn.now());

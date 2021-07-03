@@ -14,7 +14,6 @@ const ClientControllerShop = require("../app/controllers/Shop/ClientsController"
 const DepartmentsControllerShop = require("../app/controllers/Shop/DepartmentsController");
 const CategoriesControllerShop = require("../app/controllers/Shop/CategoriesController");
 const ProductControllerShop = require("../app/controllers/Shop/ProductsController");
-const ColorsControllerShop = require("../app/controllers/Shop/ColorsController");
 const SizesControllerShop = require("../app/controllers/Shop/SizesController");
 const ImageColorsController = require("../app/controllers/Shop/ImageColorsController");
 const DetailsControllerShop = require("../app/controllers/Shop/DetailsControllerShop");
@@ -121,14 +120,6 @@ router.put(
 router.put("/productsActive/:id", verifyToken, ProductControllerShop.Active);
 router.put("/updateStock/:id", verifyToken, ProductControllerShop.UpdateStock);
 
-/** COLORS SHOP */
-router.get("/colors", ColorsControllerShop.Show);
-router.post("/colors", verifyToken, ColorsControllerShop.Store);
-router.get("/colorsGet/:id", ColorsControllerShop.Find);
-router.put("/colors/:id", verifyToken, ColorsControllerShop.Update);
-router.delete("/colors/:id", verifyToken, ColorsControllerShop.Remove);
-router.get("/colorDependents", ColorsControllerShop.FindProducts);
-
 /** SIZES SHOP */
 router.get("/sizes", SizesControllerShop.Show);
 router.post("/sizes", verifyToken, SizesControllerShop.Store);
@@ -148,7 +139,6 @@ router.post(
 );
 router.get("/imagesDependets/:product", ImageColorsController.FindDependents);
 router.delete("/imageColors/:id", verifyToken, ImageColorsController.Remove);
-router.get("/findImages/:color", ImageColorsController.Find);
 
 /** DETALHES DO PRODUTO SHOP */
 router.get("/details/:product", DetailsControllerShop.Find);
