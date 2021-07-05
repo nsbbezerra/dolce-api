@@ -139,6 +139,7 @@ router.post(
 );
 router.get("/imagesDependets/:product", ImageColorsController.FindDependents);
 router.delete("/imageColors/:id", verifyToken, ImageColorsController.Remove);
+router.get("/findImages/:id", ImageColorsController.Find);
 
 /** DETALHES DO PRODUTO SHOP */
 router.get("/details/:product", DetailsControllerShop.Find);

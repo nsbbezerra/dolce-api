@@ -2,12 +2,11 @@ const knex = require("../../../database/pg");
 
 module.exports = {
   async Store(req, res) {
-    const { product, color, size, amount } = req.body;
+    const { product, size, amount } = req.body;
 
     try {
       await knex("sizes").insert({
         products_id: product,
-        colors_id: color,
         size,
         amount,
       });
@@ -61,18 +60,11 @@ module.exports = {
     const { product } = req.params;
     try {
       const sizes = await knex
-        .select([
-          "sizes.id",
-          "sizes.amount",
-          "sizes.size",
-          "colors.name",
-          "colors.hex",
-        ])
+        .select("*")
         .from("sizes")
         .whereExists(function () {
           this.select("id").from("sizes").whereRaw(`products_id = ${product}`);
-        })
-        .innerJoin("colors", "colors.id", "sizes.colors_id");
+        });
       return res.status(200).json(sizes);
     } catch (error) {
       const errorMessage = error.message;

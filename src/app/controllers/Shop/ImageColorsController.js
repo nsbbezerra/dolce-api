@@ -30,6 +30,24 @@ module.exports = {
     }
   },
 
+  async Find(req, res) {
+    const { id } = req.params;
+    try {
+      const images = await knex
+        .select("*")
+        .from("images")
+        .where({ products_id: id })
+        .orderBy("updated_at");
+      return res.status(200).json(images);
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao buscar as informações",
+        errorMessage,
+      });
+    }
+  },
+
   async Show(req, res) {
     try {
       const images = await knex.select("*").table("images");
