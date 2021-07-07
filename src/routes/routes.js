@@ -24,6 +24,7 @@ const ChecksController = require("../app/controllers/Shop/CheckController");
 const PixController = require("../app/controllers/Shop/PixController");
 const ExpensesController = require("../app/controllers/Shop/ExpensesController");
 const RevenuesController = require("../app/controllers/Shop/RevenuesController");
+const FakerController = require("../app/controllers/Shop/FakerController");
 
 async function verifyToken(req, res, next) {
   const token = req.headers["x-access-token"];
@@ -97,7 +98,7 @@ router.put("/categories/:id", verifyToken, CategoriesControllerShop.Update);
 router.put("/activeCategory/:id", verifyToken, CategoriesControllerShop.Active);
 
 /** PRODUCTS SHOP */
-router.get("/products", ProductControllerShop.Show);
+router.get("/products/:page", ProductControllerShop.Show);
 router.get("/findDependents", ProductControllerShop.FindAllDependets);
 router.post(
   "/products",
@@ -236,5 +237,10 @@ router.delete("/revenues/:id", verifyToken, RevenuesController.Remove);
 /** CAIXA */
 router.get("/cashier/:find/:init/:final", CashierController.Find);
 router.post("/cashier", verifyToken, CashierController.Open);
+
+/** FAKER */
+router.post("/fakeDepartments", FakerController.StoreDepartments);
+router.post("/fakerCategory", FakerController.StoreCategory);
+router.post("/fakerProducts", FakerController.StoreProducts);
 
 module.exports = router;

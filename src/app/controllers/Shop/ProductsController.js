@@ -107,6 +107,8 @@ module.exports = {
   },
 
   async Show(req, res) {
+    const { page } = req.params;
+    const pageInt = parseInt(page);
     try {
       const products = await knex
         .select([
@@ -156,9 +158,13 @@ module.exports = {
         .from("products")
         .innerJoin("departments", "departments.id", "products.departments_id")
         .innerJoin("categories", "categories.id", "products.categories_id")
-        .orderBy("name");
+        .orderBy("name")
+        .limit(10)
+        .offset((pageInt - 1) * 10);
 
-      return res.status(201).json(products);
+      const [count] = await knex("products").count();
+
+      return res.status(201).json({ products, count });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({

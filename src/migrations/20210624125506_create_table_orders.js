@@ -19,6 +19,7 @@ exports.up = function (knex) {
     table.enu("from", ["site", "shop"]).notNullable();
     table.json("payment_info");
     table.json("products");
+    table.integer("service_id");
     table
       .enu("status_order_site", [
         "awaiting_payment",
