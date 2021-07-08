@@ -45,8 +45,8 @@ module.exports = {
     try {
       async function Store() {
         await knex("products").insert({
-          departments_id: 2,
-          categories_id: 2,
+          departments_id: 3,
+          categories_id: 3,
           name: faker.commerce.productName(),
           identify: uniqid("produto-"),
           description: faker.commerce.product(),
@@ -66,7 +66,7 @@ module.exports = {
         });
       }
 
-      for (let index = 0; index < 10; index++) {
+      for (let index = 0; index < 5; index++) {
         Store();
       }
 

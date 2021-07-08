@@ -98,7 +98,8 @@ router.put("/categories/:id", verifyToken, CategoriesControllerShop.Update);
 router.put("/activeCategory/:id", verifyToken, CategoriesControllerShop.Active);
 
 /** PRODUCTS SHOP */
-router.get("/products/:page", ProductControllerShop.Show);
+router.get("/products/:page/:find/:name", ProductControllerShop.Show);
+router.get("/findProducts", ProductControllerShop.FindProducts);
 router.get("/findDependents", ProductControllerShop.FindAllDependets);
 router.post(
   "/products",
