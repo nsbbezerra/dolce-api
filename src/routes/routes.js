@@ -121,6 +121,11 @@ router.put(
 );
 router.put("/productsActive/:id", verifyToken, ProductControllerShop.Active);
 router.put("/updateStock/:id", verifyToken, ProductControllerShop.UpdateStock);
+router.put(
+  "/updateInfoAndList/:id",
+  verifyToken,
+  ProductControllerShop.UpdateInfoAndList
+);
 
 /** SIZES SHOP */
 router.get("/sizes", SizesControllerShop.Show);

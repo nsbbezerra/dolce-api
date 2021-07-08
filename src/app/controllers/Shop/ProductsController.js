@@ -51,6 +51,8 @@ module.exports = {
       freight_length,
       freight_format,
       provider,
+      information,
+      list,
     } = req.body;
     const { filename } = req.file;
     try {
@@ -93,6 +95,8 @@ module.exports = {
         freight_format,
         thumbnail: filename,
         providers_id: provider,
+        information,
+        list: list,
       });
       return res
         .status(201)
@@ -151,6 +155,8 @@ module.exports = {
             "products.promotional_value",
             "products.promotional_rate",
             "products.active",
+            "products.information",
+            "products.list",
             "departments.name as dep_name",
             "categories.name as cat_name",
             "departments.id as dep_id",
@@ -211,6 +217,8 @@ module.exports = {
             "products.promotional_value",
             "products.promotional_rate",
             "products.active",
+            "products.information",
+            "products.list",
             "departments.name as dep_name",
             "categories.name as cat_name",
             "departments.id as dep_id",
@@ -271,6 +279,8 @@ module.exports = {
             "products.promotional_value",
             "products.promotional_rate",
             "products.active",
+            "products.information",
+            "products.list",
             "departments.name as dep_name",
             "categories.name as cat_name",
             "departments.id as dep_id",
@@ -331,6 +341,8 @@ module.exports = {
             "products.promotional_value",
             "products.promotional_rate",
             "products.active",
+            "products.information",
+            "products.list",
             "departments.name as dep_name",
             "categories.name as cat_name",
             "departments.id as dep_id",
@@ -388,6 +400,8 @@ module.exports = {
             "products.promotional_value",
             "products.promotional_rate",
             "products.active",
+            "products.information",
+            "products.list",
             "departments.name as dep_name",
             "categories.name as cat_name",
             "departments.id as dep_id",
@@ -592,6 +606,8 @@ module.exports = {
           "products.promotional_value",
           "products.promotional_rate",
           "products.active",
+          "products.information",
+          "products.list",
           "departments.name as dep_name",
           "categories.name as cat_name",
           "departments.id as dep_id",
@@ -665,6 +681,28 @@ module.exports = {
       return res
         .status(201)
         .json({ message: "Alteração concluída com sucesso", size });
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao alterar as informações",
+        errorMessage,
+      });
+    }
+  },
+
+  async UpdateInfoAndList(req, res) {
+    const { id } = req.params;
+    const { information, list } = req.body;
+
+    try {
+      const product = await knex("products")
+        .where({ id: id })
+        .update({ information, list })
+        .returning("*");
+
+      return res
+        .status(201)
+        .json({ message: "Informações alteradas com sucesso", product });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
