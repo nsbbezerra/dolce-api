@@ -26,6 +26,9 @@ const ExpensesController = require("../app/controllers/Shop/ExpensesController")
 const RevenuesController = require("../app/controllers/Shop/RevenuesController");
 const FakerController = require("../app/controllers/Shop/FakerController");
 
+/** SITE CONTROLLERS */
+const HomeController = require("../app/controllers/Web/HomeController");
+
 async function verifyToken(req, res, next) {
   const token = req.headers["x-access-token"];
   await jwt.verify(token, configs.secret, (err, decoded) => {
@@ -248,5 +251,11 @@ router.post("/cashier", verifyToken, CashierController.Open);
 router.post("/fakeDepartments", FakerController.StoreDepartments);
 router.post("/fakerCategory", FakerController.StoreCategory);
 router.post("/fakerProducts", FakerController.StoreProducts);
+
+/** SITE ROUTES */
+
+/** HOME */
+router.get("/home", HomeController.Home);
+router.get("/homeProducts/:find/:cats/:page", HomeController.HomeProducts);
 
 module.exports = router;
