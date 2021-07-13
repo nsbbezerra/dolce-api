@@ -257,5 +257,8 @@ router.post("/fakerProducts", FakerController.StoreProducts);
 /** HOME */
 router.get("/home", HomeController.Home);
 router.get("/homeProducts/:find/:cats/:page", HomeController.HomeProducts);
+router.get("/productsPage", HomeController.ProductsPage);
+router.get("/findByParams/:identify", HomeController.FindByParams);
+router.get("/findSizesAndImages/:identify", HomeController.FindSizesAndImages);
 
 module.exports = router;
