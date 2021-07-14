@@ -4,6 +4,12 @@ module.exports = {
   async Store(req, res) {
     const { name, description } = req.body;
     try {
+      const dep = await knex("departments").where({ name }).first();
+
+      if (dep) {
+        return res.status(400).json({ message: "Departamento já cadastrado" });
+      }
+
       await knex("departments").insert({
         name,
         description,
