@@ -25,6 +25,7 @@ const PixController = require("../app/controllers/Shop/PixController");
 const ExpensesController = require("../app/controllers/Shop/ExpensesController");
 const RevenuesController = require("../app/controllers/Shop/RevenuesController");
 const FakerController = require("../app/controllers/Shop/FakerController");
+const TagsController = require("../app/controllers/Shop/TagsController");
 
 /** SITE CONTROLLERS */
 const HomeController = require("../app/controllers/Web/HomeController");
@@ -246,6 +247,24 @@ router.delete("/revenues/:id", verifyToken, RevenuesController.Remove);
 /** CAIXA */
 router.get("/cashier/:find/:init/:final", CashierController.Find);
 router.post("/cashier", verifyToken, CashierController.Open);
+
+/** TAGS */
+router.post("/tags", verifyToken, TagsController.Store);
+router.put(
+  "/tags/:id",
+  multer(uploaderConfig.img).single("banner"),
+  verifyToken,
+  TagsController.StoreBanner
+);
+router.get("/findActiveTags", TagsController.FindActive);
+router.get("/tags", TagsController.Find);
+router.put("/updateTagInfo/:id", verifyToken, TagsController.UpdateInfo);
+router.put(
+  "/updateTagBanner/:id",
+  multer(uploaderConfig.img).single("banner"),
+  verifyToken,
+  TagsController.UpdateBanner
+);
 
 /** FAKER */
 router.post("/fakeDepartments", FakerController.StoreDepartments);
