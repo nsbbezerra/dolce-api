@@ -80,12 +80,12 @@ module.exports = {
 
   async UpdateInfo(req, res) {
     const { id } = req.params;
-    const { name, discount } = req.body;
+    const { active } = req.body;
 
     try {
       const tags = await knex("tags")
         .where({ id: id })
-        .update({ name, discount })
+        .update({ active })
         .returning("*");
       return res
         .status(201)

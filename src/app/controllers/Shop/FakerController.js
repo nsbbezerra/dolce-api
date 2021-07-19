@@ -60,13 +60,13 @@ module.exports = {
           freight_height: faker.commerce.price(),
           freight_diameter: faker.commerce.price(),
           freight_length: faker.commerce.price(),
-          thumbnail: "produto.jpg",
+          thumbnail: "produto2.jpg",
           providers_id: 2,
           information: faker.lorem.slug(),
         });
       }
 
-      for (let index = 0; index < 5; index++) {
+      for (let index = 0; index < 10; index++) {
         Store();
       }
 

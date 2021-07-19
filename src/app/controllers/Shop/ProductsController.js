@@ -406,11 +406,35 @@ module.exports = {
 
   async SetPromotional(req, res) {
     const { id } = req.params;
-    const { promotional, promotional_value, promotional_rate } = req.body;
+    const {
+      promotional,
+      promotional_value,
+      promotional_rate,
+      tag_name,
+      tag_id,
+    } = req.body;
+
+    let namePromo;
+    let idPromo;
+
+    if (promotional === true) {
+      namePromo = tag_name;
+      idPromo = tag_id;
+    } else {
+      namePromo = "";
+      idPromo = 0;
+    }
+
     try {
       const product = await knex("products")
         .where({ id: id })
-        .update({ promotional, promotional_value, promotional_rate })
+        .update({
+          promotional,
+          promotional_value,
+          promotional_rate,
+          tag_name: namePromo,
+          tag_id: idPromo,
+        })
         .returning("*");
       return res
         .status(201)
