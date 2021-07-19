@@ -48,7 +48,7 @@ module.exports = {
           departments_id: 3,
           categories_id: 3,
           name: faker.commerce.productName(),
-          identify: uniqid("produto-"),
+          identify: uniqid(),
           description: faker.commerce.product(),
           sku: faker.random.uuid(),
           barcode: faker.random.uuid(),
