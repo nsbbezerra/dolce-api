@@ -5,6 +5,7 @@ const products_config = [
   "products.name",
   "products.thumbnail",
   "products.description",
+  "products.identify",
   "products.sku",
   "products.barcode",
   "products.cfop",
