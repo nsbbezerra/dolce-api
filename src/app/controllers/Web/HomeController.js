@@ -8,25 +8,6 @@ const products_config = [
   "products.identify",
   "products.sku",
   "products.barcode",
-  "products.cfop",
-  "products.ncm",
-  "products.icms_rate",
-  "products.icms_origin",
-  "products.icms_csosn",
-  "products.icms_st_rate",
-  "products.icms_marg_val_agregate",
-  "products.icms_st_mod_bc",
-  "products.fcp_rate",
-  "products.fcp_st_rate",
-  "products.fcp_ret_rate",
-  "products.ipi_cst",
-  "products.ipi_rate",
-  "products.ipi_code",
-  "products.pis_cst",
-  "products.pis_rate",
-  "products.cofins_cst",
-  "products.cofins_rate",
-  "products.cest",
   "products.cost_value",
   "products.other_cost",
   "products.sale_value",
@@ -61,8 +42,12 @@ module.exports = {
         .from("categories")
         .where({ active: true })
         .orderBy("name");
-
-      return res.status(200).json({ departments, categories });
+      const promo = await knex
+        .select("*")
+        .from("tags")
+        .where({ active: true })
+        .orderBy("created_at", "desc");
+      return res.status(200).json({ departments, categories, promo });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
