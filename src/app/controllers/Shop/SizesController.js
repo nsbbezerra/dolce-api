@@ -62,9 +62,7 @@ module.exports = {
       const sizes = await knex
         .select("*")
         .from("sizes")
-        .whereExists(function () {
-          this.select("id").from("sizes").whereRaw(`products_id = ${product}`);
-        });
+        .where({ products_id: product });
       return res.status(200).json(sizes);
     } catch (error) {
       const errorMessage = error.message;

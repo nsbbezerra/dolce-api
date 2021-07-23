@@ -160,6 +160,7 @@ module.exports = {
   async Show(req, res) {
     const { page, find, name } = req.params;
     const pageInt = parseInt(page);
+
     try {
       if (find === "1") {
         const products = await knex
@@ -227,23 +228,88 @@ module.exports = {
         return res.status(201).json({ products, count });
       }
       if (find === "5") {
-        const products = await knex
-          .select(products_config)
-          .from("products")
-          .where("products.name", "like", `%${name}%`)
-          .innerJoin("departments", "departments.id", "products.departments_id")
-          .innerJoin("categories", "categories.id", "products.categories_id")
-          .orderBy("name")
-          .limit(10)
-          .offset((pageInt - 1) * 10);
+        if (name === "All") {
+          const products = await knex
+            .select(products_config)
+            .from("products")
+            .innerJoin(
+              "departments",
+              "departments.id",
+              "products.departments_id"
+            )
+            .innerJoin("categories", "categories.id", "products.categories_id")
+            .orderBy("name")
+            .limit(10)
+            .offset((pageInt - 1) * 10);
 
-        const [count] = await knex("products")
-          .where("products.name", "like", `%${name}%`)
-          .count();
+          const [count] = await knex("products").count();
 
-        return res.status(201).json({ products, count });
+          return res.status(201).json({ products, count });
+        } else {
+          const products = await knex
+            .select(products_config)
+            .from("products")
+            .where("products.name", "like", `%${name}%`)
+            .innerJoin(
+              "departments",
+              "departments.id",
+              "products.departments_id"
+            )
+            .innerJoin("categories", "categories.id", "products.categories_id")
+            .orderBy("name")
+            .limit(10)
+            .offset((pageInt - 1) * 10);
+
+          const [count] = await knex("products")
+            .where("products.name", "like", `%${name}%`)
+            .count();
+
+          return res.status(201).json({ products, count });
+        }
+      }
+
+      if (find === "6") {
+        if (name === "All") {
+          const products = await knex
+            .select(products_config)
+            .from("products")
+            .innerJoin(
+              "departments",
+              "departments.id",
+              "products.departments_id"
+            )
+            .innerJoin("categories", "categories.id", "products.categories_id")
+            .orderBy("name")
+            .limit(10)
+            .offset((pageInt - 1) * 10);
+
+          const [count] = await knex("products").count();
+
+          return res.status(201).json({ products, count });
+        } else {
+          const products = await knex
+            .select(products_config)
+            .from("products")
+            .where("products.sku", "like", `%${name}%`)
+            .innerJoin(
+              "departments",
+              "departments.id",
+              "products.departments_id"
+            )
+            .innerJoin("categories", "categories.id", "products.categories_id")
+            .orderBy("name")
+            .limit(10)
+            .offset((pageInt - 1) * 10);
+
+          const [count] = await knex("products")
+            .where("products.sku", "like", `%${name}%`)
+            .count();
+
+          return res.status(201).json({ products, count });
+        }
       }
     } catch (error) {
+      console.log(error);
       const errorMessage = error.message;
       return res.status(400).json({
         message: "Ocorreu um erro ao buscar os produtos",
