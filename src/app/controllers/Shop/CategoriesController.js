@@ -21,7 +21,7 @@ module.exports = {
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
-        message: "Ocorreu um erro ao cadastrar o departamento",
+        message: "Ocorreu um erro ao cadastrar a categoria",
         errorMessage,
       });
     }
@@ -91,6 +91,24 @@ module.exports = {
       const errorMessage = error.message;
       return res.status(400).json({
         message: "Ocorreu um erro ao alterar as informações",
+        errorMessage,
+      });
+    }
+  },
+
+  async FindByDepartment(req, res) {
+    const { id } = req.params;
+
+    try {
+      const categories = await knex("categories")
+        .select("*")
+        .where({ departments_id: id })
+        .orderBy("name");
+      return res.status(201).json(categories);
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao buscar as informações",
         errorMessage,
       });
     }

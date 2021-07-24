@@ -61,8 +61,9 @@ module.exports = {
           freight_diameter: faker.commerce.price(),
           freight_length: faker.commerce.price(),
           thumbnail: "produto2.jpg",
-          providers_id: 2,
+          providers_id: 1,
           information: faker.lorem.slug(),
+          sub_cat_id: 3,
         });
       }
 
@@ -71,6 +72,26 @@ module.exports = {
       }
 
       return res.status(201).json({ message: "Cadastramento concluído" });
+    } catch (error) {
+      return res.status(400).json(error);
+    }
+  },
+
+  async StoreSubCat(req, res) {
+    try {
+      async function Store(id) {
+        await knex("subCat").insert({
+          name: faker.commerce.department(),
+          categories_id: id + 1,
+          description: faker.commerce.productAdjective(),
+        });
+      }
+
+      for (let index = 0; index < 3; index++) {
+        Store(index);
+      }
+
+      return res.status(201).json({ message: "Cadastrametno concluído" });
     } catch (error) {
       return res.status(400).json(error);
     }

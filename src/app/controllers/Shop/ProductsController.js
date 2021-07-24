@@ -100,6 +100,7 @@ module.exports = {
       provider,
       information,
       list,
+      sub_cat_id,
     } = req.body;
     const { filename } = req.file;
     try {
@@ -144,6 +145,7 @@ module.exports = {
         providers_id: provider,
         information,
         list: list,
+        sub_cat_id,
       });
       return res
         .status(201)

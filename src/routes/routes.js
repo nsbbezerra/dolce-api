@@ -26,6 +26,7 @@ const ExpensesController = require("../app/controllers/Shop/ExpensesController")
 const RevenuesController = require("../app/controllers/Shop/RevenuesController");
 const FakerController = require("../app/controllers/Shop/FakerController");
 const TagsController = require("../app/controllers/Shop/TagsController");
+const SubCatController = require("../app/controllers/Shop/SubCatController");
 
 /** SITE CONTROLLERS */
 const HomeController = require("../app/controllers/Web/HomeController");
@@ -100,6 +101,10 @@ router.post("/categories", verifyToken, CategoriesControllerShop.Store);
 router.get("/categories", CategoriesControllerShop.Show);
 router.put("/categories/:id", verifyToken, CategoriesControllerShop.Update);
 router.put("/activeCategory/:id", verifyToken, CategoriesControllerShop.Active);
+router.get(
+  "/findCatByDepartments/:id",
+  CategoriesControllerShop.FindByDepartment
+);
 
 /** PRODUCTS SHOP */
 router.get("/products/:page/:find/:name", ProductControllerShop.Show);
@@ -266,10 +271,17 @@ router.put(
   TagsController.UpdateBanner
 );
 
+/** SUB-CATEGORIES */
+router.post("/subCat", verifyToken, SubCatController.Store);
+router.get("/subCat/:category", SubCatController.Find);
+router.get("/findSubCat", SubCatController.Show);
+router.put("/activeSubCat/:id", verifyToken, SubCatController.Active);
+
 /** FAKER */
 router.post("/fakeDepartments", FakerController.StoreDepartments);
 router.post("/fakerCategory", FakerController.StoreCategory);
 router.post("/fakerProducts", FakerController.StoreProducts);
+router.post("/fakerSubCat", FakerController.StoreSubCat);
 
 /** SITE ROUTES */
 
