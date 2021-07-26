@@ -34,7 +34,7 @@ module.exports = {
       const sub_cat = await knex
         .select("*")
         .from("subCat")
-        .where({ categories_id: category })
+        .where({ categories_id: category, active: true })
         .orderBy("name");
 
       return res.status(201).json(sub_cat);

@@ -322,10 +322,17 @@ module.exports = {
 
   async FindAllDependets(req, res) {
     try {
-      const departments = await knex.select("*").table("departments");
-      const categories = await knex.select("*").table("categories");
-      const providers = await knex.select("*").table("providers");
-      return res.status(201).json({ departments, categories, providers });
+      const departments = await knex
+        .select("*")
+        .table("departments")
+        .where({ active: true })
+        .orderBy("name");
+      const providers = await knex
+        .select("*")
+        .table("providers")
+        .where({ active: true })
+        .orderBy("name");
+      return res.status(201).json({ departments, providers });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({

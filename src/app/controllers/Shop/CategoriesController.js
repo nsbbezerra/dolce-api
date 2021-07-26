@@ -102,7 +102,7 @@ module.exports = {
     try {
       const categories = await knex("categories")
         .select("*")
-        .where({ departments_id: id })
+        .where({ departments_id: id, active: true })
         .orderBy("name");
       return res.status(201).json(categories);
     } catch (error) {
