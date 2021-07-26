@@ -42,6 +42,41 @@ module.exports = {
     }
   },
 
+  async ShowWithPagination(req, res) {
+    const { page, text } = req.params;
+    const pageInt = parseInt(page);
+    try {
+      if (text === "All") {
+        const departments = await knex
+          .select("*")
+          .table("departments")
+          .orderBy("name")
+          .limit(10)
+          .offset((pageInt - 1) * 10);
+        const [count] = await knex("departments").count();
+        return res.status(201).json({ departments, count });
+      } else {
+        const departments = await knex
+          .select("*")
+          .table("departments")
+          .where("name", "like", `%${text}%`)
+          .orderBy("name")
+          .limit(10)
+          .offset((pageInt - 1) * 10);
+        const [count] = await knex("departments")
+          .where("name", "like", `%${text}%`)
+          .count();
+        return res.status(201).json({ departments, count });
+      }
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao buscar os departamentos",
+        errorMessage,
+      });
+    }
+  },
+
   async Update(req, res) {
     const { id } = req.params;
     const { name, description } = req.body;

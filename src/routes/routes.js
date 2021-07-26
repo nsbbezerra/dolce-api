@@ -89,6 +89,10 @@ router.put("/restrictclient/:id", verifyToken, ClientControllerShop.Restrict);
 /** DEPARTAMENTOS SHOP */
 router.post("/departments", verifyToken, DepartmentsControllerShop.Store);
 router.get("/departments", DepartmentsControllerShop.Show);
+router.get(
+  "/departmentsPagination/:page/:text",
+  DepartmentsControllerShop.ShowWithPagination
+);
 router.put("/departments/:id", verifyToken, DepartmentsControllerShop.Update);
 router.put(
   "/activeDepartment/:id",
@@ -99,6 +103,10 @@ router.put(
 /** CATEGORIAS SHOP */
 router.post("/categories", verifyToken, CategoriesControllerShop.Store);
 router.get("/categories", CategoriesControllerShop.Show);
+router.get(
+  "/categoriesPagination/:page/:text",
+  CategoriesControllerShop.ShowWithPagination
+);
 router.put("/categories/:id", verifyToken, CategoriesControllerShop.Update);
 router.put("/activeCategory/:id", verifyToken, CategoriesControllerShop.Active);
 router.get(
@@ -275,6 +283,10 @@ router.put(
 router.post("/subCat", verifyToken, SubCatController.Store);
 router.get("/subCat/:category", SubCatController.Find);
 router.get("/findSubCat", SubCatController.Show);
+router.get(
+  "/subCatPagination/:page/:text",
+  SubCatController.ShowWithPagination
+);
 router.put("/activeSubCat/:id", verifyToken, SubCatController.Active);
 router.put("/subCat/:id", verifyToken, SubCatController.Edit);
 

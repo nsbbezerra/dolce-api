@@ -71,6 +71,58 @@ module.exports = {
     }
   },
 
+  async ShowWithPagination(req, res) {
+    const { page, text } = req.params;
+    const pageInt = parseInt(page);
+
+    try {
+      if (text === "All") {
+        const sub_cat = await knex
+          .select([
+            "subCat.name",
+            "subCat.id",
+            "subCat.active",
+            "subCat.description",
+            "categories.id as category_id",
+            "categories.name as category_name",
+          ])
+          .from("subCat")
+          .innerJoin("categories", "categories.id", "subCat.categories_id")
+          .orderBy("subCat.name")
+          .limit(10)
+          .offset((pageInt - 1) * 10);
+        const [count] = await knex("subCat").count();
+        return res.status(201).json({ sub_cat, count });
+      } else {
+        const sub_cat = await knex
+          .select([
+            "subCat.name",
+            "subCat.id",
+            "subCat.active",
+            "subCat.description",
+            "categories.id as category_id",
+            "categories.name as category_name",
+          ])
+          .from("subCat")
+          .where("subCat.name", "like", `%${text}%`)
+          .innerJoin("categories", "categories.id", "subCat.categories_id")
+          .orderBy("subCat.name")
+          .limit(10)
+          .offset((pageInt - 1) * 10);
+        const [count] = await knex("subCat")
+          .where("subCat.name", "like", `%${text}%`)
+          .count();
+        return res.status(201).json({ sub_cat, count });
+      }
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao buscar as informações",
+        errorMessage,
+      });
+    }
+  },
+
   async Active(req, res) {
     const { id } = req.params;
     const { active } = req.body;

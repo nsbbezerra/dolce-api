@@ -54,6 +54,64 @@ module.exports = {
     }
   },
 
+  async ShowWithPagination(req, res) {
+    const { page, text } = req.params;
+    const pageInt = parseInt(page);
+
+    try {
+      if (text === "All") {
+        const categories = await knex
+          .select([
+            "categories.id",
+            "categories.name",
+            "categories.description",
+            "categories.active",
+            "departments.name as dep_name",
+          ])
+          .from("categories")
+          .innerJoin(
+            "departments",
+            "departments.id",
+            "categories.departments_id"
+          )
+          .orderBy("categories.name")
+          .limit(10)
+          .offset((pageInt - 1) * 10);
+        const [count] = await knex("categories").count();
+        return res.status(201).json({ categories, count });
+      } else {
+        const categories = await knex
+          .select([
+            "categories.id",
+            "categories.name",
+            "categories.description",
+            "categories.active",
+            "departments.name as dep_name",
+          ])
+          .from("categories")
+          .where("categories.name", "like", `%${text}%`)
+          .innerJoin(
+            "departments",
+            "departments.id",
+            "categories.departments_id"
+          )
+          .orderBy("categories.name")
+          .limit(10)
+          .offset((pageInt - 1) * 10);
+        const [count] = await knex("categories")
+          .where("categories.name", "like", `%${text}%`)
+          .count();
+        return res.status(201).json({ categories, count });
+      }
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao cadastrar o departamento",
+        errorMessage,
+      });
+    }
+  },
+
   async Update(req, res) {
     const { id } = req.params;
     const { name, description } = req.body;
