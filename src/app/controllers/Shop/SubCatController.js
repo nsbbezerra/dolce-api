@@ -92,4 +92,26 @@ module.exports = {
       });
     }
   },
+
+  async Edit(req, res) {
+    const { id } = req.params;
+    const { name, description } = req.body;
+
+    try {
+      const subCat = await knex("subCat")
+        .where({ id: id })
+        .update({ name, description })
+        .returning("*");
+
+      return res
+        .status(201)
+        .json({ message: "Informações alteradas com sucesso", subCat });
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao editar as informações",
+        errorMessage,
+      });
+    }
+  },
 };

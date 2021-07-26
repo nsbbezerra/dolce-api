@@ -276,6 +276,7 @@ router.post("/subCat", verifyToken, SubCatController.Store);
 router.get("/subCat/:category", SubCatController.Find);
 router.get("/findSubCat", SubCatController.Show);
 router.put("/activeSubCat/:id", verifyToken, SubCatController.Active);
+router.put("/subCat/:id", verifyToken, SubCatController.Edit);
 
 /** FAKER */
 router.post("/fakeDepartments", FakerController.StoreDepartments);
