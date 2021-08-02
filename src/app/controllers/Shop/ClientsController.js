@@ -54,6 +54,41 @@ module.exports = {
     }
   },
 
+  async ShowWithAdress(req, res) {
+    try {
+      const clients = await knex
+        .select([
+          "clients.id",
+          "clients.name",
+          "clients.gender",
+          "clients.email",
+          "clients.contact",
+          "clients.cpf",
+          "clients.user",
+          "clients.active",
+          "clients.restrict",
+          "addresses.id as addresses_id",
+          "addresses.street",
+          "addresses.number",
+          "addresses.comp",
+          "addresses.bairro",
+          "addresses.city",
+          "addresses.cep",
+          "addresses.state",
+        ])
+        .table("clients")
+        .innerJoin("addresses", "addresses.client_id", "clients.id")
+        .orderBy("clients.name");
+      return res.status(201).json(clients);
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao buscar os clientes",
+        errorMessage,
+      });
+    }
+  },
+
   async Update(req, res) {
     const { id } = req.params;
     const { name, gender, cpf, email, contact, user, password } = req.body;

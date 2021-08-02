@@ -82,6 +82,7 @@ router.put("/comission/:id", verifyToken, EmployeeController.Comission);
 /** CLIENTES SHOP */
 router.post("/clients", verifyToken, ClientControllerShop.Store);
 router.get("/clients", ClientControllerShop.Show);
+router.get("/clientsWithAddress", ClientControllerShop.ShowWithAdress);
 router.put("/clients/:id", verifyToken, ClientControllerShop.Update);
 router.put("/activeclient/:id", verifyToken, ClientControllerShop.Active);
 router.put("/restrictclient/:id", verifyToken, ClientControllerShop.Restrict);
@@ -116,6 +117,10 @@ router.get(
 
 /** PRODUCTS SHOP */
 router.get("/products/:page/:find/:name", ProductControllerShop.Show);
+router.get(
+  "/productsPdv/:page/:name/:sku/:barcode",
+  ProductControllerShop.ShowPdv
+);
 router.get("/findProducts", ProductControllerShop.FindProducts);
 router.get("/findDependents", ProductControllerShop.FindAllDependets);
 router.post(

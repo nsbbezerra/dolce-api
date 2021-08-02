@@ -320,6 +320,86 @@ module.exports = {
     }
   },
 
+  async ShowPdv(req, res) {
+    const { page, name, sku, barcode } = req.params;
+    const pageInt = parseInt(page);
+
+    try {
+      if (name !== "All") {
+        const products = await knex
+          .select(products_config)
+          .from("products")
+          .where("products.name", "like", `%${name}%`)
+          .innerJoin("departments", "departments.id", "products.departments_id")
+          .innerJoin("categories", "categories.id", "products.categories_id")
+          .orderBy("products.name")
+          .limit(10)
+          .offset((pageInt - 1) * 10);
+
+        const [count] = await knex("products")
+          .where("products.name", "like", `%${name}%`)
+          .count();
+
+        return res.status(201).json({ products, count });
+      }
+      if (sku !== "All") {
+        const products = await knex
+          .select(products_config)
+          .from("products")
+          .where("products.sku", "like", `%${sku}%`)
+          .innerJoin("departments", "departments.id", "products.departments_id")
+          .innerJoin("categories", "categories.id", "products.categories_id")
+          .orderBy("products.name")
+          .limit(10)
+          .offset((pageInt - 1) * 10);
+
+        const [count] = await knex("products")
+          .where("products.sku", "like", `%${sku}%`)
+          .count();
+
+        return res.status(201).json({ products, count });
+      }
+      if (barcode !== "All") {
+        const products = await knex
+          .select(products_config)
+          .from("products")
+          .where("products.barcode", "like", `%${barcode}%`)
+          .innerJoin("departments", "departments.id", "products.departments_id")
+          .innerJoin("categories", "categories.id", "products.categories_id")
+          .orderBy("products.name")
+          .limit(10)
+          .offset((pageInt - 1) * 10);
+
+        const [count] = await knex("products")
+          .where("products.barcode", "like", `%${barcode}%`)
+          .count();
+
+        return res.status(201).json({ products, count });
+      }
+
+      const products = await knex
+        .select(products_config)
+        .from("products")
+        .where("products.active", true)
+        .innerJoin("departments", "departments.id", "products.departments_id")
+        .innerJoin("categories", "categories.id", "products.categories_id")
+        .orderBy("products.name")
+        .limit(10)
+        .offset((pageInt - 1) * 10);
+
+      const [count] = await knex("products").where("active", true).count();
+
+      return res.status(201).json({ products, count });
+    } catch (error) {
+      console.log(error);
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao buscar os produtos",
+        errorMessage,
+      });
+    }
+  },
+
   async FindAllDependets(req, res) {
     try {
       const departments = await knex
