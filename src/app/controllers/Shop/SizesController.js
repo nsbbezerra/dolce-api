@@ -33,6 +33,24 @@ module.exports = {
     }
   },
 
+  async ShowByProduct(req, res) {
+    const { id } = req.params;
+    try {
+      const sizes = await knex
+        .select("*")
+        .table("sizes")
+        .where({ products_id: id })
+        .orderBy("size");
+      return res.status(201).json(sizes);
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao buscar as informações",
+        errorMessage,
+      });
+    }
+  },
+
   async Find(req, res) {
     const { color } = req.params;
     try {

@@ -151,6 +151,7 @@ router.put(
 
 /** SIZES SHOP */
 router.get("/sizes", SizesControllerShop.Show);
+router.get("/sizeByProduct/:id", SizesControllerShop.ShowByProduct);
 router.post("/sizes", verifyToken, SizesControllerShop.Store);
 router.put("/sizes/:id", verifyToken, SizesControllerShop.Update);
 router.delete("/sizes/:id", verifyToken, SizesControllerShop.Remove);
