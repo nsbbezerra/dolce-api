@@ -37,7 +37,6 @@ module.exports = {
         })
         .returning("*");
 
-      /** CALCULAR ESTOQUE */
       const sizes = await knex.select("*").from("sizes");
 
       async function calculate(product) {
