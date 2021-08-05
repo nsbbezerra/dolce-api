@@ -209,6 +209,7 @@ router.put(
 /** FORMAS DE PAGAMENTO */
 
 router.get("/payForm", PayFormControllerShop.Show);
+router.get("/payFormPdv", PayFormControllerShop.ShowPdv);
 router.post("/payForm", verifyToken, PayFormControllerShop.Store);
 router.put("/payForm/:id", verifyToken, PayFormControllerShop.Update);
 router.put(

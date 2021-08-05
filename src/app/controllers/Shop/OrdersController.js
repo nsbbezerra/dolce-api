@@ -36,6 +36,24 @@ module.exports = {
           obs,
         })
         .returning("*");
+
+      /** CALCULAR ESTOQUE */
+      const sizes = await knex.select("*").from("sizes");
+
+      async function calculate(product) {
+        const actualy = await sizes.find((obj) => obj.id === product.size_id);
+        const actualyAmount = actualy?.amount;
+        const newAmount = product.quantity;
+        const soma = actualyAmount - newAmount;
+        await knex("sizes")
+          .where({ id: product.size_id })
+          .update({ amount: soma });
+      }
+
+      await products.forEach((product) => {
+        calculate(product);
+      });
+
       return res.status(201).json(order);
     } catch (error) {
       const errorMessage = error.message;

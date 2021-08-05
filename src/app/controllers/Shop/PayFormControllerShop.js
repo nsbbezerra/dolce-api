@@ -61,15 +61,35 @@ module.exports = {
     }
   },
 
+  async ShowPdv(req, res) {
+    try {
+      const payForms = await knex
+        .select([
+          "payForm.id",
+          "payForm.name",
+          "payForm.max_portion",
+          "payForm.interval_days",
+          "payForm.status",
+          "payForm.type",
+          "payForm.show_on_site",
+          "bankAccount.id as id_bank_account",
+          "bankAccount.bank",
+        ])
+        .from("payForm")
+        .innerJoin("bankAccount", "bankAccount.id", "payForm.bank_id");
+      return res.status(200).json(payForms);
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao buscar as formas de pagamento",
+        errorMessage,
+      });
+    }
+  },
+
   async Update(req, res) {
-    const {
-      name,
-      bank_id,
-      type,
-      max_portion,
-      interval_days,
-      status,
-    } = req.body;
+    const { name, bank_id, type, max_portion, interval_days, status } =
+      req.body;
     const { id } = req.params;
 
     try {
