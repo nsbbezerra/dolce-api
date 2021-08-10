@@ -34,6 +34,16 @@ module.exports = {
           month: data.toLocaleString("pt-BR", { month: "long" }),
           year: data.getFullYear().toString(),
         });
+        await knex("planAccounts").insert({
+          plan: "1.1.01",
+          name: "Venda De Produtos",
+          mode: "credit",
+        });
+        await knex("planAccounts").insert({
+          plan: "1.1.02",
+          name: "Prestação de Serviços",
+          mode: "credit",
+        });
         console.log("Criado");
       } else {
         console.log("Saiu");

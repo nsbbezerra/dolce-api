@@ -28,6 +28,7 @@ const FakerController = require("../app/controllers/Shop/FakerController");
 const TagsController = require("../app/controllers/Shop/TagsController");
 const SubCatController = require("../app/controllers/Shop/SubCatController");
 const OrderControllerShop = require("../app/controllers/Shop/OrdersController");
+const PaymentsController = require("../app/controllers/Shop/PaymentController");
 
 /** SITE CONTROLLERS */
 const HomeController = require("../app/controllers/Web/HomeController");
@@ -300,6 +301,9 @@ router.put("/subCat/:id", verifyToken, SubCatController.Edit);
 
 /** ORDERS */
 router.post("/order", verifyToken, OrderControllerShop.Store);
+
+/** PAYMENTS */
+router.post("/payments", verifyToken, PaymentsController.Store);
 
 /** FAKER */
 router.post("/fakeDepartments", FakerController.StoreDepartments);

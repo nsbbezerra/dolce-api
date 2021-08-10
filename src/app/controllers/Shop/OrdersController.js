@@ -16,11 +16,12 @@ module.exports = {
 
     try {
       const data = new Date(order_date);
+      const cashier = await knex.select("id").from("cashier").first();
 
       const order = await knex("orders")
         .insert({
           client_id,
-          cashier_id: 1,
+          cashier_id: cashier.id,
           employee_id,
           from: "shop",
           products: JSON.stringify(products),
