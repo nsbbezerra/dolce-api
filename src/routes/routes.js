@@ -301,6 +301,7 @@ router.put("/subCat/:id", verifyToken, SubCatController.Edit);
 
 /** ORDERS */
 router.post("/order", verifyToken, OrderControllerShop.Store);
+router.post("/budget", verifyToken, OrderControllerShop.StoreWithBudget);
 
 /** PAYMENTS */
 router.post("/payments", verifyToken, PaymentsController.Store);
