@@ -12,11 +12,17 @@ module.exports = {
       order_date,
       waiting,
       obs,
+      isBudget,
+      orderID,
     } = req.body;
 
     try {
       const data = new Date(order_date);
       const cashier = await knex.select("id").from("cashier").first();
+
+      if (isBudget) {
+        await knex("orders").where({ id: orderID }).del();
+      }
 
       const order = await knex("orders")
         .insert({
@@ -81,7 +87,7 @@ module.exports = {
       const data = new Date(order_date);
       const cashier = await knex.select("id").from("cashier").first();
 
-      const order = await knex("orders")
+      await knex("orders")
         .insert({
           client_id,
           cashier_id: cashier.id,
@@ -102,6 +108,33 @@ module.exports = {
         .returning("*");
 
       return res.status(201).json({ message: "Orçamento salvo com sucesso" });
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao salvar o orçamento",
+        errorMessage,
+      });
+    }
+  },
+
+  async FindBudget(req, res) {
+    try {
+      const budget = await knex
+        .select([
+          "orders.id",
+          "orders.grand_total",
+          "orders.discount",
+          "orders.total_to_pay",
+          "orders.order_date",
+          "orders.products",
+          "clients.id as client_id",
+          "clients.name as client_name",
+        ])
+        .from("orders")
+        .where({ status_order_shop: "budget" })
+        .innerJoin("clients", "clients.id", "orders.client_id")
+        .orderBy("orders.created_at");
+      return res.status(201).json(budget);
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
