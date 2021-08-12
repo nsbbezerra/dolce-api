@@ -60,7 +60,7 @@ module.exports = {
           freight_height: faker.commerce.price(),
           freight_diameter: faker.commerce.price(),
           freight_length: faker.commerce.price(),
-          thumbnail: "produto2.jpg",
+          thumbnail: "produto2.jpeg",
           providers_id: 1,
           information: faker.lorem.slug(),
           sub_cat_id: 3,

@@ -101,4 +101,40 @@ module.exports = {
       });
     }
   },
+
+  async FindOrders(req, res) {
+    const { page } = req.params;
+    const pageInt = parseInt(page);
+
+    try {
+      const orders = await knex
+        .select([
+          "orders.id",
+          "orders.order_date",
+          "orders.grand_total",
+          "orders.discount",
+          "orders.total_to_pay",
+          "clients.id as client_id",
+          "clients.name as client_name",
+        ])
+        .from("orders")
+        .where({ status_order_shop: "billed" })
+        .innerJoin("clients", "clients.id", "orders.client_id")
+        .orderBy("orders.order_date", "desc")
+        .limit(10)
+        .offset((pageInt - 1) * 10);
+
+      const [count] = await knex("orders")
+        .where({ status_order_shop: "billed" })
+        .count();
+
+      return res.status(201).json({ orders, count });
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao listar os caixas",
+        errorMessage,
+      });
+    }
+  },
 };

@@ -269,6 +269,7 @@ router.delete("/revenues/:id", verifyToken, RevenuesController.Remove);
 /** CAIXA */
 router.get("/cashier/:find/:init/:final", CashierController.Find);
 router.post("/cashier", verifyToken, CashierController.Open);
+router.get("/findOrdersCashier/:page", CashierController.FindOrders);
 
 /** TAGS */
 router.post("/tags", verifyToken, TagsController.Store);
