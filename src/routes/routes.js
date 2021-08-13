@@ -270,6 +270,7 @@ router.delete("/revenues/:id", verifyToken, RevenuesController.Remove);
 router.get("/cashier/:find/:init/:final", CashierController.Find);
 router.post("/cashier", verifyToken, CashierController.Open);
 router.get("/findOrdersCashier/:page", CashierController.FindOrders);
+router.put("/finalizeOrder/:order", verifyToken, CashierController.FinishOrder);
 
 /** TAGS */
 router.post("/tags", verifyToken, TagsController.Store);
@@ -309,6 +310,9 @@ router.put(
   verifyToken,
   OrderControllerShop.ConvertOrderToBudget
 );
+
+/** CASH HANDLING */
+router.post("/cashHandling", verifyToken, CashHandlingController.Handling);
 
 /** PAYMENTS */
 router.post("/payments", verifyToken, PaymentsController.Store);

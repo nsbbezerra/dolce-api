@@ -96,7 +96,7 @@ module.exports = {
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
-        message: "Ocorreu um erro ao listar os caixas",
+        message: "Ocorreu um erro",
         errorMessage,
       });
     }
@@ -114,6 +114,8 @@ module.exports = {
           "orders.grand_total",
           "orders.discount",
           "orders.total_to_pay",
+          "orders.products",
+          "orders.payment_info",
           "clients.id as client_id",
           "clients.name as client_name",
         ])
@@ -132,7 +134,25 @@ module.exports = {
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
-        message: "Ocorreu um erro ao listar os caixas",
+        message: "Ocorreu um erro",
+        errorMessage,
+      });
+    }
+  },
+
+  async FinishOrder(req, res) {
+    const { order } = req.params;
+    const { cash } = req.body;
+
+    try {
+      await knex("orders")
+        .where({ id: order, cashier_id: cash })
+        .update({ status_order_shop: "completed" });
+      return res.status(201).json({ message: "Pedido finalizado com sucesso" });
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro",
         errorMessage,
       });
     }
