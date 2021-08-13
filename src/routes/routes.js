@@ -304,9 +304,23 @@ router.put("/subCat/:id", verifyToken, SubCatController.Edit);
 router.post("/order", verifyToken, OrderControllerShop.Store);
 router.post("/budget", verifyToken, OrderControllerShop.StoreWithBudget);
 router.get("/findBudget", OrderControllerShop.FindBudget);
+router.put(
+  "/convertToBudget/:id",
+  verifyToken,
+  OrderControllerShop.ConvertOrderToBudget
+);
 
 /** PAYMENTS */
 router.post("/payments", verifyToken, PaymentsController.Store);
+router.get(
+  "/findPaymentsByOrder/:order",
+  PaymentsController.FindPaymentsByOrders
+);
+router.delete(
+  "/delPaymentsByOrder/:order",
+  verifyToken,
+  PaymentsController.DelPaymentsByOrder
+);
 
 /** FAKER */
 router.post("/fakeDepartments", FakerController.StoreDepartments);

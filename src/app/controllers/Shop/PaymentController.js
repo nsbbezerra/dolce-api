@@ -104,11 +104,60 @@ module.exports = {
         .where({ id: order_id })
         .update({ payment_info: JSON.stringify(payments) });
 
+      const findPaymentOrder = await payments.filter(
+        (obj) => obj.pay_form_status === "parceled_out"
+      );
+
+      if (findPaymentOrder.length === 0) {
+        await knex("orders")
+          .where({ id: order_id })
+          .update({ waiting: "none" });
+      } else {
+        await knex("orders").where({ id: order_id }).update({ waiting: "yes" });
+      }
+
       return res
         .status(201)
         .json({ message: "Pagamentos inseridos com sucesso" });
     } catch (error) {
-      console.log(error);
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao excluir o pix",
+        errorMessage,
+      });
+    }
+  },
+
+  async FindPaymentsByOrders(req, res) {
+    const { order } = req.params;
+
+    try {
+      const payments = await knex
+        .select("*")
+        .from("payments")
+        .where({ order_id: order })
+        .orderBy("due_date");
+
+      return res.status(201).json(payments);
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao excluir o pix",
+        errorMessage,
+      });
+    }
+  },
+
+  async DelPaymentsByOrder(req, res) {
+    const { order } = req.params;
+
+    try {
+      await knex("payments").where({ order_id: order }).del();
+      await knex("commission").where({ order_id: order }).del();
+      return res
+        .status(201)
+        .json({ message: "Pagamentos cancelados com sucesso" });
+    } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
         message: "Ocorreu um erro ao excluir o pix",

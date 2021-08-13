@@ -10,7 +10,6 @@ module.exports = {
       discount,
       total_to_pay,
       order_date,
-      waiting,
       obs,
       isBudget,
       orderID,
@@ -37,7 +36,6 @@ module.exports = {
           discount,
           total_to_pay,
           order_date,
-          waiting,
           month: data.toLocaleString("pt-BR", { month: "long" }),
           year: data.getFullYear().toString(),
           obs,
@@ -135,6 +133,56 @@ module.exports = {
         .innerJoin("clients", "clients.id", "orders.client_id")
         .orderBy("orders.created_at");
       return res.status(201).json(budget);
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao salvar o orçamento",
+        errorMessage,
+      });
+    }
+  },
+
+  async ConvertOrderToBudget(req, res) {
+    const { id } = req.params;
+
+    try {
+      const order = await knex
+        .select("*")
+        .from("orders")
+        .where({ id: id })
+        .first();
+
+      const sizes = await knex.select("*").from("sizes");
+
+      if (order.products.length === 0 || !order.products) {
+        return res
+          .status(400)
+          .json({ message: "Não foi encontrado produtos neste pedido" });
+      } else {
+        async function updateStock(products) {
+          let actualyStock = await sizes.find(
+            (obj) => obj.products_id === products.product_id
+          );
+          let soma = actualyStock.amount + products.quantity;
+          await knex("sizes")
+            .where({ id: actualyStock.id })
+            .update({ amount: soma });
+        }
+
+        await order.products.forEach((products) => {
+          updateStock(products);
+        });
+
+        await knex("orders")
+          .where({ id: id })
+          .update({ status_order_shop: "budget" });
+        await knex("commission").where({ order_id: id }).del();
+        await knex("payments").where({ order_id: id }).del();
+      }
+
+      return res
+        .status(201)
+        .json({ message: "Pedido convertido em orçamento com sucesso" });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
