@@ -148,6 +148,9 @@ module.exports = {
       await knex("orders")
         .where({ id: order, cashier_id: cash })
         .update({ status_order_shop: "completed" });
+      await knex("payments")
+        .where({ order_id: order })
+        .update({ cashier_id: cash });
       return res.status(201).json({ message: "Pedido finalizado com sucesso" });
     } catch (error) {
       const errorMessage = error.message;
