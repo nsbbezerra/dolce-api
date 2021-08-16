@@ -146,8 +146,8 @@ module.exports = {
 
     try {
       await knex("orders")
-        .where({ id: order, cashier_id: cash })
-        .update({ status_order_shop: "completed" });
+        .where({ id: order })
+        .update({ status_order_shop: "completed", cashier_id: cash });
       await knex("payments")
         .where({ order_id: order })
         .update({ cashier_id: cash });

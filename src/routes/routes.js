@@ -29,6 +29,7 @@ const TagsController = require("../app/controllers/Shop/TagsController");
 const SubCatController = require("../app/controllers/Shop/SubCatController");
 const OrderControllerShop = require("../app/controllers/Shop/OrdersController");
 const PaymentsController = require("../app/controllers/Shop/PaymentController");
+const ReportController = require("../app/controllers/Shop/ReportController");
 
 /** SITE CONTROLLERS */
 const HomeController = require("../app/controllers/Web/HomeController");
@@ -325,6 +326,9 @@ router.delete(
   verifyToken,
   PaymentsController.DelPaymentsByOrder
 );
+
+/** REPORT CONTROLLER */
+router.get("/reportOrder/:id", ReportController.OrderReport);
 
 /** FAKER */
 router.post("/fakeDepartments", FakerController.StoreDepartments);
