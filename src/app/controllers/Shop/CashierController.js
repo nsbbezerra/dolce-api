@@ -1,4 +1,5 @@
 const knex = require("../../../database/pg");
+const uniqid = require("uniqid");
 
 module.exports = {
   async Open(req, res) {
@@ -153,6 +154,91 @@ module.exports = {
         .update({ cashier_id: cash });
       return res.status(201).json({ message: "Pedido finalizado com sucesso" });
     } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro",
+        errorMessage,
+      });
+    }
+  },
+
+  async Moviment(req, res) {
+    const { cash } = req.params;
+
+    try {
+      const payForms = await knex.select("*").from("payForm");
+      let payFormsReport = [];
+      const orders = await knex
+        .select([
+          "orders.id",
+          "orders.order_date",
+          "orders.grand_total",
+          "orders.discount",
+          "orders.total_to_pay",
+          "orders.products",
+          "orders.payment_info",
+          "clients.id as client_id",
+          "clients.name as client_name",
+        ])
+        .from("orders")
+        .where({ cashier_id: cash })
+        .innerJoin("clients", "clients.id", "orders.client_id")
+        .orderBy("orders.order_date");
+      const cashier = await knex
+        .select([
+          "cashier.id",
+          "cashier.status",
+          "cashier.open_date",
+          "cashier.open_value",
+          "cashier.close_date",
+          "cashier.close_value",
+          "employees.id as employee_id",
+          "employees.name as employee_name",
+        ])
+        .from("cashier")
+        .where("cashier.id", cash)
+        .innerJoin("employees", "employees.id", "cashier.employee_id")
+        .first();
+      const payments = await knex
+        .select("*")
+        .from("payments")
+        .where({ cashier_id: cash });
+
+      async function calculate(payform, payment) {
+        let valor = payment.reduce(
+          (total, numeros) => total + parseFloat(numeros.value),
+          0
+        );
+        let info = { id: uniqid(), pay_form: payform.name, value: valor };
+        payFormsReport.push(info);
+      }
+
+      await payForms.forEach((pay) => {
+        const result = payments.filter((obj) => obj.payForm_id === pay.id);
+        calculate(pay, result);
+      });
+
+      const revenues = await knex
+        .select("*")
+        .from("cashierMov")
+        .where({ cashier_id: cash, type: "deposit" })
+        .orderBy("created_at");
+      const expenses = await knex
+        .select("*")
+        .from("cashierMov")
+        .where({ cashier_id: cash, type: "withdraw" })
+        .orderBy("created_at");
+
+      return res.status(201).json({
+        orders,
+        payments,
+        revenues,
+        expenses,
+        cashier,
+        payFormsReport,
+      });
+    } catch (error) {
+      console.log(error);
       const errorMessage = error.message;
       return res.status(400).json({
         message: "Ocorreu um erro",

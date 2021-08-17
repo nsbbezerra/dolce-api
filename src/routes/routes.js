@@ -272,6 +272,7 @@ router.get("/cashier/:find/:init/:final", CashierController.Find);
 router.post("/cashier", verifyToken, CashierController.Open);
 router.get("/findOrdersCashier/:page", CashierController.FindOrders);
 router.put("/finalizeOrder/:order", verifyToken, CashierController.FinishOrder);
+router.get("/cashierMoviment/:cash", CashierController.Moviment);
 
 /** TAGS */
 router.post("/tags", verifyToken, TagsController.Store);

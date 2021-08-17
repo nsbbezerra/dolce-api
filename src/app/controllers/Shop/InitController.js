@@ -26,6 +26,10 @@ module.exports = {
             comissioned: false,
           })
           .returning("id");
+        console.log("LOGIN CRIADO");
+      }
+      const cashier = await knex.select("*").from("cashier");
+      if (cashier.length === 0) {
         await knex("cashier").insert({
           employee_id: id,
           open_value: 0,
@@ -34,6 +38,14 @@ module.exports = {
           month: data.toLocaleString("pt-BR", { month: "long" }),
           year: data.getFullYear().toString(),
         });
+        console.log("CAIXA CRIADO");
+      }
+      const plan = await knex
+        .select("*")
+        .from("planAccounts")
+        .where({ name: "Venda De Produtos" })
+        .first();
+      if (!plan) {
         await knex("planAccounts").insert({
           plan: "1.1.01",
           name: "Venda De Produtos",
@@ -44,9 +56,7 @@ module.exports = {
           name: "Prestação de Serviços",
           mode: "credit",
         });
-        console.log("Criado");
-      } else {
-        console.log("Saiu");
+        console.log("PLANO DE CONTAS CRIADO");
       }
     } catch (error) {
       console.log(error);
