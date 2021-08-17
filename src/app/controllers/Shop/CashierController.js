@@ -238,7 +238,44 @@ module.exports = {
         payFormsReport,
       });
     } catch (error) {
-      console.log(error);
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro",
+        errorMessage,
+      });
+    }
+  },
+
+  async CloseCashier(req, res) {
+    const { cash } = req.params;
+
+    try {
+      const revenues = await knex
+        .select("*")
+        .from("cashierMov")
+        .where({ cashier_id: cash, type: "deposit" })
+        .orderBy("created_at");
+      const expenses = await knex
+        .select("*")
+        .from("cashierMov")
+        .where({ cashier_id: cash, type: "withdraw" })
+        .orderBy("created_at");
+
+      let valorRevenues = revenues.reduce(
+        (total, numeros) => total + parseFloat(numeros.value),
+        0
+      );
+
+      let valorExpenses = expenses.reduce(
+        (total, numeros) => total + parseFloat(numeros.value),
+        0
+      );
+      let soma = valorRevenues - valorExpenses;
+      await knex("cashier")
+        .where({ id: cash })
+        .update({ status: "close", close_date: new Date(), close_value: soma });
+      return res.status(201).json({ message: "Caixa fechado com sucesso" });
+    } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
         message: "Ocorreu um erro",

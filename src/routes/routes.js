@@ -273,6 +273,7 @@ router.post("/cashier", verifyToken, CashierController.Open);
 router.get("/findOrdersCashier/:page", CashierController.FindOrders);
 router.put("/finalizeOrder/:order", verifyToken, CashierController.FinishOrder);
 router.get("/cashierMoviment/:cash", CashierController.Moviment);
+router.put("/closeCashier/:cash", verifyToken, CashierController.CloseCashier);
 
 /** TAGS */
 router.post("/tags", verifyToken, TagsController.Store);
@@ -330,6 +331,7 @@ router.delete(
 
 /** REPORT CONTROLLER */
 router.get("/reportOrder/:id", ReportController.OrderReport);
+router.get("/cashierReport/:cash", ReportController.CashierReport);
 
 /** FAKER */
 router.post("/fakeDepartments", FakerController.StoreDepartments);
