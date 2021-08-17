@@ -257,6 +257,16 @@ module.exports = {
         .where({ cashier_id: cash, type: "withdraw" })
         .orderBy("created_at");
 
+      let valorRevenues = revenues.reduce(
+        (total, numeros) => total + parseFloat(numeros.value),
+        0
+      );
+
+      let valorExpenses = expenses.reduce(
+        (total, numeros) => total + parseFloat(numeros.value),
+        0
+      );
+
       const printer = new PDFPrinter(fonts);
 
       let columnsTitle = [
@@ -302,7 +312,6 @@ module.exports = {
           bold: true,
         },
       ];
-
       let columnsTitleMoviment = [
         {
           text: "Descrição",
@@ -325,7 +334,6 @@ module.exports = {
           bold: true,
         },
       ];
-
       let columnsTitleMovimentWithDraw = [
         {
           text: "Descrição",
@@ -348,16 +356,52 @@ module.exports = {
           bold: true,
         },
       ];
+      let columnsTitleResume = [
+        { text: "Descrição", margin: [1, 1], fontSize: 8, bold: true },
+        {
+          text: "Vencimento",
+          margin: [1, 1],
+          fontSize: 8,
+          bold: true,
+          alignment: "center",
+        },
+        {
+          text: "Valor",
+          margin: [1, 1],
+          fontSize: 8,
+          bold: true,
+          alignment: "right",
+        },
+        {
+          text: "Status",
+          margin: [1, 1],
+          fontSize: 8,
+          bold: true,
+          alignment: "right",
+        },
+      ];
+      let columnsTitleResumeFinal = [
+        { text: "Descrição", margin: [1, 1], fontSize: 8, bold: true },
+        {
+          text: "Valor",
+          margin: [1, 1],
+          fontSize: 8,
+          bold: true,
+          alignment: "right",
+        },
+      ];
 
       let body = [];
-
       let bodyMoviment = [];
       let bodyMovimentWithDraw = [];
+      let bodyResume = [];
+      let bodyResumeFinal = [];
 
       let columnsBodyMoviment = [];
       let columnsBodyMovimentWithDraw = [];
-
       let columnsBody = [];
+      let columnsBodyResume = [];
+      let columnsBodyResumeFinal = [];
 
       columnsTitle.forEach((column) => columnsBody.push(column));
       body.push(columnsBody);
@@ -370,8 +414,15 @@ module.exports = {
       columnsTitleMovimentWithDraw.forEach((column) =>
         columnsBodyMovimentWithDraw.push(column)
       );
-
       bodyMovimentWithDraw.push(columnsBodyMovimentWithDraw);
+
+      columnsTitleResume.forEach((column) => columnsBodyResume.push(column));
+      bodyResume.push(columnsBodyResume);
+
+      columnsTitleResumeFinal.forEach((column) =>
+        columnsBodyResumeFinal.push(column)
+      );
+      bodyResumeFinal.push(columnsBodyResumeFinal);
 
       await orders.forEach((order) => {
         const rows = [];
@@ -466,6 +517,50 @@ module.exports = {
         bodyMovimentWithDraw.push(rows);
       });
 
+      await payments.forEach((pay) => {
+        let rows = [];
+        rows.push({ text: pay.identify, margin: [1, 1], fontSize: 8 });
+        rows.push({
+          text: moment(pay.due_date).format("DD/MM/YYYY"),
+          margin: [1, 1],
+          fontSize: 8,
+          alignment: "center",
+        });
+        rows.push({
+          text: parseFloat(pay.value).toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          }),
+          margin: [1, 1],
+          fontSize: 8,
+          alignment: "right",
+        });
+        rows.push({
+          text: pay.status === "paid_out" ? "Pago" : "Não pago",
+          margin: [1, 1],
+          fontSize: 8,
+          alignment: "center",
+        });
+
+        bodyResume.push(rows);
+      });
+
+      await payFormsReport.forEach((pay) => {
+        let rows = [];
+        rows.push({ text: pay.pay_form, margin: [1, 1], fontSize: 8 });
+        rows.push({
+          text: parseFloat(pay.value).toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          }),
+          margin: [1, 1],
+          fontSize: 8,
+          alignment: "right",
+        });
+
+        bodyResumeFinal.push(rows);
+      });
+
       const docsDefinitions = {
         defaultStyle: { font: "Helvetica" },
         pageMargins: [30, 30, 30, 30],
@@ -494,6 +589,54 @@ module.exports = {
             alignment: "center",
             margin: [0, 20, 0, 20],
             bold: true,
+          },
+          {
+            text: `Colaborador: ${cashier.employee_name}`,
+            fontSize: 9,
+            margin: [0, 2, 0, 2],
+          },
+          {
+            text: `Data de Abertura: ${moment(cashier.open_date).format(
+              "DD/MM/YYYY"
+            )}`,
+            fontSize: 9,
+            margin: [0, 2, 0, 2],
+          },
+          {
+            text: `Valor de Abertura: ${parseFloat(
+              cashier.open_value
+            ).toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            })}`,
+            fontSize: 9,
+            margin: [0, 2, 0, 2],
+          },
+          {
+            text: `Data de Fechamento: ${
+              !cashier.close_date
+                ? "-"
+                : moment(cashier.close_date).format("DD/MM/YYYY")
+            }`,
+            fontSize: 9,
+            margin: [0, 2, 0, 2],
+          },
+          {
+            text: `Valor de Fechamento: ${
+              !cashier.close_value
+                ? "-"
+                : parseFloat(cashier.close_value).toLocaleString("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                  })
+            }`,
+            fontSize: 9,
+            margin: [0, 2, 0, 2],
+          },
+          {
+            text: `Status: ${cashier.status === "open" ? "Aberto" : "Fechado"}`,
+            fontSize: 9,
+            margin: [0, 2, 0, 2],
           },
           {
             text: "Pedidos",
@@ -528,6 +671,18 @@ module.exports = {
             },
           },
           {
+            text: `Total dos Depósitos: ${parseFloat(
+              valorRevenues
+            ).toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            })}`,
+            fontSize: 11,
+            alignment: "right",
+            margin: [0, 10, 0, 7],
+            bold: true,
+          },
+          {
             text: "Movimentação do Caixa: Retiradas",
             fontSize: 11,
             alignment: "center",
@@ -541,6 +696,51 @@ module.exports = {
               widths: ["*", 50, 50],
 
               body: bodyMovimentWithDraw,
+            },
+          },
+          {
+            text: `Total das Retiradas: ${parseFloat(
+              valorExpenses
+            ).toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            })}`,
+            fontSize: 11,
+            alignment: "right",
+            margin: [0, 10, 0, 7],
+            bold: true,
+          },
+          {
+            text: "Pagamentos",
+            fontSize: 11,
+            alignment: "center",
+            margin: [0, 10, 0, 7],
+          },
+          {
+            table: {
+              // headers are automatically repeated if the table spans over multiple pages
+              // you can declare how many rows should be treated as headers
+              headerRows: 1,
+              widths: ["*", 50, 50, 50],
+
+              body: bodyResume,
+            },
+          },
+          {
+            text: "Resumo Financeiro",
+            fontSize: 11,
+            alignment: "center",
+            margin: [0, 10, 0, 7],
+            bold: true,
+          },
+          {
+            table: {
+              // headers are automatically repeated if the table spans over multiple pages
+              // you can declare how many rows should be treated as headers
+              headerRows: 1,
+              widths: ["*", "*"],
+
+              body: bodyResumeFinal,
             },
           },
         ],
