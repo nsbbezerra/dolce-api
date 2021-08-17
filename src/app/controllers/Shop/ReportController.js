@@ -1,6 +1,7 @@
 const knex = require("../../../database/pg");
 const PDFPrinter = require("pdfmake");
 const { fonts } = require("../../../configs/configs");
+const moment = require("moment");
 
 module.exports = {
   async OrderReport(req, res) {
@@ -236,7 +237,7 @@ module.exports = {
           (total, numeros) => total + parseFloat(numeros.value),
           0
         );
-        let info = { id: uniqid(), pay_form: payform.name, value: valor };
+        let info = { pay_form: payform.name, value: valor };
         payFormsReport.push(info);
       }
 
@@ -257,6 +258,214 @@ module.exports = {
         .orderBy("created_at");
 
       const printer = new PDFPrinter(fonts);
+
+      let columnsTitle = [
+        {
+          text: "Nº",
+          margin: [1, 1],
+          fontSize: 8,
+          alignment: "center",
+          bold: true,
+        },
+        {
+          text: "Cliente",
+          margin: [1, 1],
+          fontSize: 8,
+          bold: true,
+        },
+        {
+          text: "Valor Total",
+          margin: [1, 1],
+          fontSize: 8,
+          alignment: "right",
+          bold: true,
+        },
+        {
+          text: "Desconto",
+          margin: [1, 1],
+          fontSize: 8,
+          alignment: "right",
+          bold: true,
+        },
+        {
+          text: "Total a Pagar",
+          margin: [1, 1],
+          fontSize: 8,
+          alignment: "right",
+          bold: true,
+        },
+        {
+          text: "Data",
+          margin: [1, 1],
+          fontSize: 8,
+          alignment: "center",
+          bold: true,
+        },
+      ];
+
+      let columnsTitleMoviment = [
+        {
+          text: "Descrição",
+          margin: [1, 1],
+          fontSize: 8,
+          bold: true,
+        },
+        {
+          text: "Data",
+          margin: [1, 1],
+          fontSize: 8,
+          alignment: "center",
+          bold: true,
+        },
+        {
+          text: "Valor",
+          margin: [1, 1],
+          fontSize: 8,
+          alignment: "right",
+          bold: true,
+        },
+      ];
+
+      let columnsTitleMovimentWithDraw = [
+        {
+          text: "Descrição",
+          margin: [1, 1],
+          fontSize: 8,
+          bold: true,
+        },
+        {
+          text: "Data",
+          margin: [1, 1],
+          fontSize: 8,
+          alignment: "center",
+          bold: true,
+        },
+        {
+          text: "Valor",
+          margin: [1, 1],
+          fontSize: 8,
+          alignment: "right",
+          bold: true,
+        },
+      ];
+
+      let body = [];
+
+      let bodyMoviment = [];
+      let bodyMovimentWithDraw = [];
+
+      let columnsBodyMoviment = [];
+      let columnsBodyMovimentWithDraw = [];
+
+      let columnsBody = [];
+
+      columnsTitle.forEach((column) => columnsBody.push(column));
+      body.push(columnsBody);
+
+      columnsTitleMoviment.forEach((column) =>
+        columnsBodyMoviment.push(column)
+      );
+      bodyMoviment.push(columnsBodyMoviment);
+
+      columnsTitleMovimentWithDraw.forEach((column) =>
+        columnsBodyMovimentWithDraw.push(column)
+      );
+
+      bodyMovimentWithDraw.push(columnsBodyMovimentWithDraw);
+
+      await orders.forEach((order) => {
+        const rows = [];
+        rows.push({
+          text: order.id,
+          margin: [1, 1],
+          fontSize: 8,
+          alignment: "center",
+        });
+        rows.push({ text: order.client_name, margin: [1, 1], fontSize: 8 });
+        rows.push({
+          text: parseFloat(order.grand_total).toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          }),
+          margin: [1, 1],
+          fontSize: 8,
+          alignment: "right",
+        });
+        rows.push({
+          text: `${parseFloat(order.discount)}%`,
+          margin: [1, 1],
+          fontSize: 8,
+          alignment: "right",
+        });
+        rows.push({
+          text: parseFloat(order.total_to_pay).toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          }),
+          fontSize: 8,
+          alignment: "right",
+        });
+        rows.push({
+          text: moment(order.order_date).format("DD/MM/YYYY"),
+          fontSize: 8,
+          alignment: "center",
+        });
+
+        body.push(rows);
+      });
+
+      await revenues.forEach((rev) => {
+        let rows = [];
+        rows.push({
+          text: rev.description,
+          margin: [1, 1],
+          fontSize: 8,
+        });
+        rows.push({
+          text: moment(rev.due_date).format("DD/MM/YYYY"),
+          margin: [1, 1],
+          fontSize: 8,
+          alignment: "center",
+        });
+        rows.push({
+          text: parseFloat(rev.value).toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          }),
+          margin: [1, 1],
+          fontSize: 8,
+          alignment: "right",
+        });
+
+        bodyMoviment.push(rows);
+      });
+
+      await expenses.forEach((rev) => {
+        let rows = [];
+        rows.push({
+          text: rev.description,
+          margin: [1, 1],
+          fontSize: 8,
+        });
+        rows.push({
+          text: moment(rev.due_date).format("DD/MM/YYYY"),
+          margin: [1, 1],
+          fontSize: 8,
+          alignment: "center",
+        });
+        rows.push({
+          text: parseFloat(rev.value).toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          }),
+          margin: [1, 1],
+          fontSize: 8,
+          alignment: "right",
+        });
+
+        bodyMovimentWithDraw.push(rows);
+      });
+
       const docsDefinitions = {
         defaultStyle: { font: "Helvetica" },
         pageMargins: [30, 30, 30, 30],
@@ -278,117 +487,61 @@ module.exports = {
             text: "Email: nsbbezerra@hotmail.com",
             style: "textCenter",
           },
+
           {
-            canvas: [
-              {
-                type: "line",
-                x1: 0,
-                y1: 5,
-                x2: 535,
-                y2: 5,
-                lineWidth: 0.5,
-              },
-            ],
+            text: "Relatório de Caixa",
+            fontSize: 13,
+            alignment: "center",
+            margin: [0, 20, 0, 20],
+            bold: true,
           },
           {
-            layout: "lightHorizontalLines", // optional
+            text: "Pedidos",
+            fontSize: 11,
+            alignment: "center",
+            margin: [0, 7, 0, 7],
+          },
+          {
             table: {
               // headers are automatically repeated if the table spans over multiple pages
               // you can declare how many rows should be treated as headers
               headerRows: 1,
-              widths: ["*", "*"],
+              widths: [25, "*", 55, 45, 55, 50],
 
-              body: [
-                [
-                  {
-                    text: "Pedido nº: 1",
-                    bold: true,
-                    margin: [1, 5],
-                  },
-                  {
-                    text: "Data: 10/01/1090",
-                    alignment: "right",
-                    margin: [1, 5],
-                    fontSize: 10,
-                  },
-                ],
-              ],
+              body,
             },
           },
           {
-            layout: "noBorders", // optional
+            text: "Movimentação do Caixa: Depósitos",
+            fontSize: 11,
+            alignment: "center",
+            margin: [0, 10, 0, 7],
+          },
+          {
             table: {
               // headers are automatically repeated if the table spans over multiple pages
               // you can declare how many rows should be treated as headers
               headerRows: 1,
-              widths: ["*", "*"],
+              widths: ["*", 50, 50],
 
-              body: [
-                [
-                  {
-                    text: "Cliente: Natanael dos Santos Bezerra",
-                    margin: [1, 1],
-                    fontSize: 9,
-                  },
-                  {
-                    text: "Fone: (63) 99971-1716",
-                    alignment: "right",
-                    margin: [1, 1],
-                    fontSize: 9,
-                  },
-                ],
-              ],
+              body: bodyMoviment,
             },
           },
           {
-            layout: "noBorders", // optional
+            text: "Movimentação do Caixa: Retiradas",
+            fontSize: 11,
+            alignment: "center",
+            margin: [0, 10, 0, 7],
+          },
+          {
             table: {
               // headers are automatically repeated if the table spans over multiple pages
               // you can declare how many rows should be treated as headers
               headerRows: 1,
-              widths: ["*"],
+              widths: ["*", 50, 50],
 
-              body: [
-                [
-                  {
-                    text: "Endereço: Rua 34, Qd 14 Lt 15, 173, Loteamento Canavieiras, CEP: 77710-000, Pedro Afonso-TO",
-                    margin: [1, 1],
-                    fontSize: 9,
-                  },
-                ],
-              ],
+              body: bodyMovimentWithDraw,
             },
-          },
-          {
-            layout: "noBorders", // optional
-            table: {
-              // headers are automatically repeated if the table spans over multiple pages
-              // you can declare how many rows should be treated as headers
-              headerRows: 1,
-              widths: ["*"],
-
-              body: [
-                [
-                  {
-                    text: "Vendedor: Natanael dos Santos Bezerra",
-                    margin: [1, 1],
-                    fontSize: 9,
-                  },
-                ],
-              ],
-            },
-          },
-          {
-            canvas: [
-              {
-                type: "line",
-                x1: 0,
-                y1: 5,
-                x2: 535,
-                y2: 5,
-                lineWidth: 0.5,
-              },
-            ],
           },
         ],
         styles: {
@@ -419,6 +572,8 @@ module.exports = {
         res.end(results);
       });
     } catch (error) {
+      console.log(error);
+      const errorMessage = error.message;
       return res.status(400).json({
         message: "Ocorreu um erro ao gerar o relatório",
         errorMessage,
