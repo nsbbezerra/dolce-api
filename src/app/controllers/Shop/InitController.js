@@ -27,18 +27,33 @@ module.exports = {
           })
           .returning("id");
         console.log("LOGIN CRIADO");
-      }
-      const cashier = await knex.select("*").from("cashier");
-      if (cashier.length === 0) {
-        await knex("cashier").insert({
-          employee_id: id,
-          open_value: 0,
-          status: "open",
-          open_date: data,
-          month: data.toLocaleString("pt-BR", { month: "long" }),
-          year: data.getFullYear().toString(),
-        });
-        console.log("CAIXA CRIADO");
+
+        const cashier = await knex.select("*").from("cashier");
+        if (cashier.length === 0) {
+          await knex("cashier").insert({
+            employee_id: id,
+            open_value: 0,
+            status: "open",
+            open_date: data,
+            month: data.toLocaleString("pt-BR", { month: "long" }),
+            year: data.getFullYear().toString(),
+          });
+          console.log("CAIXA CRIADO");
+        }
+      } else {
+        const employee = await knex.select("*").from("employees").first();
+        const cashier = await knex.select("*").from("cashier");
+        if (cashier.length === 0) {
+          await knex("cashier").insert({
+            employee_id: employee.id,
+            open_value: 0,
+            status: "open",
+            open_date: data,
+            month: data.toLocaleString("pt-BR", { month: "long" }),
+            year: data.getFullYear().toString(),
+          });
+          console.log("CAIXA CRIADO");
+        }
       }
       const plan = await knex
         .select("*")
