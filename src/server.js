@@ -5,6 +5,7 @@ const path = require("path");
 const bodyparser = require("body-parser");
 const routes = require("./routes/routes");
 const InitialController = require("./app/controllers/Shop/InitController");
+const { version } = require("../package.json");
 
 const app = express();
 
@@ -29,6 +30,6 @@ app.use(
 const port = process.env.PORT || 3333;
 
 app.listen(port, function () {
-  console.log("App running in port", port);
+  console.log("App running in port", port, `Versão: ${version}`);
   InitialController.InitialController();
 });

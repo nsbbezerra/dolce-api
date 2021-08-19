@@ -2,6 +2,7 @@ const knex = require("../../../database/pg");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const configs = require("../../../configs/configs");
+const { version } = require("../../../../package.json");
 
 module.exports = {
   async Store(req, res, next) {
@@ -172,8 +173,14 @@ module.exports = {
   },
 
   async Autenticate(req, res) {
-    const { user, password } = req.body;
+    const { user, password, vers } = req.body;
     try {
+      if (vers !== version) {
+        return res.status(400).json({
+          warning: "incompatible",
+          message: `Versão do Aplicativo é incompatível com a versão atual do Servidor. Versão Atual: ${version}`,
+        });
+      }
       const employee = await knex("employees")
         .where({ user: user })
         .select("id", "password", "name", "active", "admin", "sales", "caixa")
