@@ -30,6 +30,7 @@ const SubCatController = require("../app/controllers/Shop/SubCatController");
 const OrderControllerShop = require("../app/controllers/Shop/OrdersController");
 const PaymentsController = require("../app/controllers/Shop/PaymentController");
 const ReportController = require("../app/controllers/Shop/ReportController");
+const XmlController = require("../app/controllers/Shop/XmlController");
 
 /** SITE CONTROLLERS */
 const HomeController = require("../app/controllers/Web/HomeController");
@@ -332,6 +333,13 @@ router.delete(
 /** REPORT CONTROLLER */
 router.get("/reportOrder/:id", ReportController.OrderReport);
 router.get("/cashierReport/:cash", ReportController.CashierReport);
+
+/** XML IMPORTER */
+router.post(
+  "/xmlimporter",
+  multer(uploaderConfig.docs).single("xml"),
+  XmlController.ReadFile
+);
 
 /** FAKER */
 router.post("/fakeDepartments", FakerController.StoreDepartments);

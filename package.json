@@ -18,6 +18,8 @@
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "fast-xml-parser": "^3.19.0",
+    "he": "^1.2.0",
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.21.17",
     "moment": "^2.29.1",
