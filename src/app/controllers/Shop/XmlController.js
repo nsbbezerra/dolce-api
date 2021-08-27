@@ -52,7 +52,6 @@ module.exports = {
 
       if (parser.validate(readeadFile) === true) {
         const jsonFile = parser.parse(readeadFile, options);
-        console.log(jsonFile.nfeProc);
         const NFE = jsonFile.nfeProc.NFe.infNFe;
         const Emitente = NFE?.emit;
         const Destinatario = NFE?.dest;
@@ -64,6 +63,50 @@ module.exports = {
 
         RemoveXml(file);
 
+        function capitalizeFirstLetter(string) {
+          let splited = string.split(" ");
+          let toJoin = splited.map((e) => {
+            return e.charAt(0).toUpperCase() + e.slice(1);
+          });
+          let joined = toJoin.join(" ");
+          return joined;
+        }
+
+        const empresa = capitalizeFirstLetter(Emitente.xNome.toLowerCase());
+
+        const provider = await knex
+          .select("name")
+          .from("providers")
+          .where({ name: empresa })
+          .first();
+
+        let Fornecedor;
+
+        if (!provider) {
+          const newProvider = await knex("providers")
+            .insert({
+              name: empresa,
+              cnpj: Emitente.CNPJ,
+              contact: Emitente.enderEmit.fone,
+              email: "email@email.com",
+              street: capitalizeFirstLetter(
+                Emitente.enderEmit.xLgr.toLowerCase()
+              ),
+              number: Emitente.enderEmit.nro,
+              district: capitalizeFirstLetter(
+                Emitente.enderEmit.xBairro.toLowerCase()
+              ),
+              city: capitalizeFirstLetter(
+                Emitente.enderEmit.xMun.toLowerCase()
+              ),
+              cep: Emitente.enderEmit.CEP,
+              state: Emitente.enderEmit.UF,
+              fantasia: capitalizeFirstLetter(Emitente.xFant.toLowerCase()),
+            })
+            .returning("*");
+          Fornecedor = newProvider;
+        }
+
         return res.status(201).json({
           Emitente,
           Destinatario,
@@ -72,6 +115,7 @@ module.exports = {
           Total,
           Transporte,
           Chave,
+          Fornecedor,
         });
       }
 
