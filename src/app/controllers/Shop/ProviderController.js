@@ -26,6 +26,7 @@ module.exports = {
       city,
       cep,
       state,
+      fantasia,
     } = req.body;
     const { filename } = req.file;
     try {
@@ -41,6 +42,7 @@ module.exports = {
         city,
         cep,
         state,
+        fantasia,
         thumbnail: filename,
       });
       return res
@@ -57,7 +59,10 @@ module.exports = {
 
   async Show(req, res) {
     try {
-      const providers = await knex.select("*").from("providers");
+      const providers = await knex
+        .select("*")
+        .from("providers")
+        .orderBy("name");
       return res.status(201).json(providers);
     } catch (error) {
       const errorMessage = error.message;
@@ -82,6 +87,7 @@ module.exports = {
       city,
       cep,
       state,
+      fantasia,
     } = req.body;
 
     try {
@@ -97,6 +103,7 @@ module.exports = {
         city,
         cep,
         state,
+        fantasia,
       });
       return res
         .status(201)
@@ -138,18 +145,20 @@ module.exports = {
         .select("id", "thumbnail")
         .where({ id: id })
         .first();
-      const pathToImage = path.resolve(
-        __dirname,
-        "..",
-        "..",
-        "..",
-        "..",
-        "..",
-        "uploads",
-        "img",
-        provider.thumbnail
-      );
-      await RemoveImage(pathToImage);
+      if (provider.thumbnail) {
+        const pathToImage = path.resolve(
+          __dirname,
+          "..",
+          "..",
+          "..",
+          "..",
+          "..",
+          "uploads",
+          "img",
+          provider.thumbnail
+        );
+        await RemoveImage(pathToImage);
+      }
       const newProvider = await knex("providers")
         .where({ id: id })
         .update({ thumbnail: filename })

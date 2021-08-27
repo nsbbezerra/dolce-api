@@ -828,6 +828,18 @@ dicer@0.2.5:
     readable-stream "1.1.x"
     streamsearch "0.1.2"
 
+djf-nfe@^1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/djf-nfe/-/djf-nfe-1.7.0.tgz#e17e23bd11d5e084715bc2226ca148ba3eb17683"
+  integrity sha512-AM5EhKvPNppW34XUfZZOjzCRtt2XRlyaQfK/3gTLQPhTKCN8yGws8x/vzfgTqNb553ggEDDptcdTnrOkO3ouoQ==
+  dependencies:
+    djf-xml "^1.0.11"
+
+djf-xml@^1.0.11:
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/djf-xml/-/djf-xml-1.0.11.tgz#4259b4a3e757af4dfca106a51865128799be2261"
+  integrity sha512-6lmua0o+PJ+bP/YhYyul/n7Ps2jOx9aoUOdBpYUIWThVUo9gAOZgjTPCJU++I5dw3ZU5F1R+1kFVXls78IcFCA==
+
 dot-prop@^5.2.0:
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/dot-prop/-/dot-prop-5.3.0.tgz#90ccce708cd9cd82cc4dc8c3ddd9abdd55b20e88"
