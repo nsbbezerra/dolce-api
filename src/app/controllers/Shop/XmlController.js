@@ -88,11 +88,6 @@ module.exports = {
       } else {
         /** SE NÃO HOUVER UMA NOTA JÁ IMPORTADA COM ESSA CHAVE, FAZ O CADASTRO DO EMITENTE E DOS PRODUTOS TEMPORÁRIOS */
 
-        const key = await knex("xmlimporter")
-          .insert({ nfe_key: chave })
-          .returning("*");
-        Key = key[0];
-
         let Produtos = [];
         let Emitente;
         let Total;
@@ -139,16 +134,17 @@ module.exports = {
 
         for (let index = 0; index < total_itens; index++) {
           /** BUSCA OS PRODUTOS NA NOTA E SALVA AS INFORMAÇÕES DELES NUM ARRAY (Produtos) */
-
           const item = nfe.item(index + 1);
           const icms = item.imposto().icms();
           const ipi = item.imposto().ipi();
           const pis = item.imposto().pis();
           const cofins = item.imposto().cofins();
 
+          let ipi_cst = ipi.cst();
+
           let product = {
             providers_id: Emitente.id,
-            xml_id: Key.id,
+            xml_id: null,
             provider_code: item.codigo(),
             name: capitalizeFirstLetter(item.descricao().toLowerCase()),
             sku: item.codigo(),
@@ -168,10 +164,10 @@ module.exports = {
             fcp_ret_rate: parseFloat(icms.porcentagemFCPSTRetido()),
             fcp_base_calc: parseFloat(icms.baseCalculoFCP()), //ADICIONAR NA TABELA
             fcp_st_base_calc: parseFloat(icms.baseCalculoFCPST()), //ADICIONAR NA TABELA
-            ipi_cst: ipi.cst(),
-            ipi_rate: parseFloat(ipi.porcentagemIPI()),
+            ipi_cst: ipi_cst,
+            ipi_rate: 0, //parseFloat(ipi.porcentagemIPI()),
             ipi_code: "0",
-            ipi_base_calc: parseFloat(ipi.baseCalculo()), //ADICIONAR NA TABELA
+            ipi_base_calc: 0, // parseFloat(ipi.baseCalculo()), //ADICIONAR NA TABELA
             pis_cst: pis.cst(),
             pis_rate: parseFloat(pis.porcentagemPIS()),
             pis_base_calc: parseFloat(pis.baseCalculo()), //ADICIONAR NA TABELA
@@ -182,7 +178,6 @@ module.exports = {
             cost_value: parseFloat(item.valorUnitario()),
             other_cost: parseFloat(item.valorOutrasDespesas()),
           };
-
           Produtos.push(product);
         }
 
@@ -194,12 +189,17 @@ module.exports = {
           chave_nfe: protocolo.chave(),
         };
 
+        const key = await knex("xmlimporter")
+          .insert({ nfe_key: chave })
+          .returning("*");
+        Key = key[0];
+
         /** SALVA OS PRODUTOS NO BANCO DE DADOS NUMA TABELA TEMPORÁRIA */
 
         async function saveTempProducts(prod) {
           await knex("tempProducts").insert({
             providers_id: prod.providers_id,
-            xml_id: prod.xml_id,
+            xml_id: Key.id,
             description: "Descrição",
             provider_code: prod.provider_code,
             name: prod.name,
