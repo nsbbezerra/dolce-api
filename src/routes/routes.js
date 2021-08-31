@@ -338,7 +338,7 @@ router.get("/cashierReport/:cash", ReportController.CashierReport);
 router.post(
   "/xmlimporter",
   multer(uploaderConfig.docs).single("xml"),
-  XmlController.ReadFile
+  XmlController.Test
 );
 
 /** FAKER */
