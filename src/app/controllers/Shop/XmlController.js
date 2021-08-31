@@ -257,8 +257,8 @@ module.exports = {
             const ipi = imposto.IPI;
             const pis = imposto.PIS;
             const cofins = imposto.COFINS;
-            const ipiCstValues = Object.values(ipi);
-            const ipiCst = ipiCstValues[1];
+            const ipiCstValues = !ipi ? null : Object.values(ipi);
+            const ipiCst = ipiCstValues === null ? "" : ipiCstValues[1];
             const pisCstValues = Object.values(pis);
             const pisCst = pisCstValues[0];
             const cofinsCstValues = Object.values(cofins);
