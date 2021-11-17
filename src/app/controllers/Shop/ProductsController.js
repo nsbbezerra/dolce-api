@@ -101,8 +101,11 @@ module.exports = {
       information,
       list,
       sub_cat_id,
+      handle,
+      id_to_del,
     } = req.body;
     const { filename } = req.file;
+    console.log("HANDLE", handle, id_to_del);
     try {
       await knex("products").insert({
         departments_id,
@@ -147,6 +150,9 @@ module.exports = {
         list: list,
         sub_cat_id,
       });
+      if (handle === "on") {
+        await knex("tempProducts").where({ id: id_to_del }).del();
+      }
       return res
         .status(201)
         .json({ message: "Produto cadastrado com sucesso" });
