@@ -32,6 +32,8 @@ const PaymentsController = require("../app/controllers/Shop/PaymentController");
 const ReportController = require("../app/controllers/Shop/ReportController");
 const XmlController = require("../app/controllers/Shop/XmlController");
 
+const TravelController = require("../app/controllers/Shop/TravelController");
+
 /** SITE CONTROLLERS */
 const HomeController = require("../app/controllers/Web/HomeController");
 
@@ -340,12 +342,16 @@ router.post(
   multer(uploaderConfig.docs).single("xml"),
   XmlController.Test
 );
+router.get("/xmlimporter", XmlController.Find);
 
 /** FAKER */
 router.post("/fakeDepartments", FakerController.StoreDepartments);
 router.post("/fakerCategory", FakerController.StoreCategory);
 router.post("/fakerProducts", FakerController.StoreProducts);
 router.post("/fakerSubCat", FakerController.StoreSubCat);
+
+/** CALCULAR FRETE */
+router.post("/travel", TravelController.CalcSending);
 
 /** SITE ROUTES */
 

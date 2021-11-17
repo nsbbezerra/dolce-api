@@ -15,6 +15,38 @@ async function RemoveXml(url) {
   });
 }
 
+const products_config = [
+  "tempProducts.id",
+  "tempProducts.name",
+  "tempProducts.description",
+  "tempProducts.sku",
+  "tempProducts.barcode",
+  "tempProducts.cfop",
+  "tempProducts.ncm",
+  "tempProducts.icms_rate",
+  "tempProducts.icms_origin",
+  "tempProducts.icms_csosn",
+  "tempProducts.icms_st_rate",
+  "tempProducts.icms_marg_val_agregate",
+  "tempProducts.icms_st_mod_bc",
+  "tempProducts.fcp_rate",
+  "tempProducts.fcp_st_rate",
+  "tempProducts.fcp_ret_rate",
+  "tempProducts.ipi_cst",
+  "tempProducts.ipi_rate",
+  "tempProducts.ipi_code",
+  "tempProducts.pis_cst",
+  "tempProducts.pis_rate",
+  "tempProducts.cofins_cst",
+  "tempProducts.cofins_rate",
+  "tempProducts.cest",
+  "tempProducts.cost_value",
+  "tempProducts.other_cost",
+  "providers.id as provider_id",
+  "providers.fantasia as provider_fantasia",
+  "providers.name as provider_name",
+];
+
 module.exports = {
   async Test(req, res) {
     const { filename } = req.file;
@@ -353,6 +385,23 @@ module.exports = {
       const errorMessage = error.message;
       return res.status(400).json({
         message: "Ocorreu um erro ao carregar o xml",
+        errorMessage,
+      });
+    }
+  },
+
+  async Find(req, res) {
+    try {
+      const products = await knex
+        .select(products_config)
+        .from("tempProducts")
+        .innerJoin("providers", "providers.id", "tempProducts.providers_id");
+
+      return res.status(200).json(products);
+    } catch (error) {
+      const errorMessage = error.message;
+      return res.status(400).json({
+        message: "Ocorreu um erro ao buscar as informações",
         errorMessage,
       });
     }
