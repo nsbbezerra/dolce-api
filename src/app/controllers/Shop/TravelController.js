@@ -1,4 +1,4 @@
-const { calcularPrecoPrazo } = require("correios-brasil");
+const {calcularPrecoPrazo} = require('correios-brasil');
 
 module.exports = {
   async CalcSending(req, res) {
@@ -24,22 +24,23 @@ module.exports = {
       nCdServico: servicos, //Array com os códigos de serviço
       nVlDiametro: diametro,
     };
+
     try {
       calcularPrecoPrazo(args)
-        .then((response) => {
+        .then(response => {
           return res.status(201).json(response);
         })
-        .catch((error) => {
+        .catch(error => {
           const errorMessage = error.message;
           return res.status(400).json({
-            message: "Ocorreu um erro ao calcular o frete",
+            message: 'Ocorreu um erro ao calcular o frete',
             errorMessage,
           });
         });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
-        message: "Ocorreu um erro ao calcular o frete",
+        message: 'Ocorreu um erro ao calcular o frete',
         errorMessage,
       });
     }
