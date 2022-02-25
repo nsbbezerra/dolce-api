@@ -13,7 +13,7 @@ exports.up = function (knex) {
       .notNullable()
       .onDelete("CASCADE");
     table.string("provider_code");
-    table.string("name").notNullable().unique();
+    table.string("name").notNullable();
     table.string("description").notNullable();
     table.string("sku");
     table.string("barcode");

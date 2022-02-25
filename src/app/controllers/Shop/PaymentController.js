@@ -55,7 +55,7 @@ module.exports = {
               due_date: addDays(new Date(), interval).data,
               month: addDays(new Date(), interval).month,
               year: addDays(new Date(), interval).year,
-              status: "waiting",
+              status: payForm.type === "credit" ? "paid_out" : "waiting",
               client_id: client_id,
             });
           }

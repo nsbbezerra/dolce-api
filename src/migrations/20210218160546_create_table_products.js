@@ -12,9 +12,9 @@ exports.up = function (knex) {
       .references("categories.id")
       .notNullable()
       .onDelete("CASCADE");
-    table.string("provider_code");
     table.string("name").notNullable().unique();
     table.string("description").notNullable();
+    table.string("provider_code");
     table.string("sku");
     table.string("barcode");
     table.decimal("rating", 8, 2);
