@@ -11,11 +11,7 @@ const EmployeeController = require("../app/controllers/Shop/EmployeeController")
 const CashHandlingController = require("../app/controllers/Shop/CashHandlingController");
 const CashierController = require("../app/controllers/Shop/CashierController");
 const ClientControllerShop = require("../app/controllers/Shop/ClientsController");
-const DepartmentsControllerShop = require("../app/controllers/Shop/DepartmentsController");
-const CategoriesControllerShop = require("../app/controllers/Shop/CategoriesController");
 const ProductControllerShop = require("../app/controllers/Shop/ProductsController");
-const SizesControllerShop = require("../app/controllers/Shop/SizesController");
-const ImageColorsController = require("../app/controllers/Shop/ImageColorsController");
 const DetailsControllerShop = require("../app/controllers/Shop/DetailsControllerShop");
 const ProvidersController = require("../app/controllers/Shop/ProviderController");
 const PlanAccountsControllerShop = require("../app/controllers/Shop/PlanAccountsController");
@@ -26,7 +22,6 @@ const ExpensesController = require("../app/controllers/Shop/ExpensesController")
 const RevenuesController = require("../app/controllers/Shop/RevenuesController");
 const FakerController = require("../app/controllers/Shop/FakerController");
 const TagsController = require("../app/controllers/Shop/TagsController");
-const SubCatController = require("../app/controllers/Shop/SubCatController");
 const OrderControllerShop = require("../app/controllers/Shop/OrdersController");
 const PaymentsController = require("../app/controllers/Shop/PaymentController");
 const ReportController = require("../app/controllers/Shop/ReportController");
@@ -93,34 +88,6 @@ router.put("/clients/:id", verifyToken, ClientControllerShop.Update);
 router.put("/activeclient/:id", verifyToken, ClientControllerShop.Active);
 router.put("/restrictclient/:id", verifyToken, ClientControllerShop.Restrict);
 
-/** DEPARTAMENTOS SHOP */
-router.post("/departments", verifyToken, DepartmentsControllerShop.Store);
-router.get("/departments", DepartmentsControllerShop.Show);
-router.get(
-  "/departmentsPagination/:page/:text",
-  DepartmentsControllerShop.ShowWithPagination
-);
-router.put("/departments/:id", verifyToken, DepartmentsControllerShop.Update);
-router.put(
-  "/activeDepartment/:id",
-  verifyToken,
-  DepartmentsControllerShop.Activate
-);
-
-/** CATEGORIAS SHOP */
-router.post("/categories", verifyToken, CategoriesControllerShop.Store);
-router.get("/categories", CategoriesControllerShop.Show);
-router.get(
-  "/categoriesPagination/:page/:text",
-  CategoriesControllerShop.ShowWithPagination
-);
-router.put("/categories/:id", verifyToken, CategoriesControllerShop.Update);
-router.put("/activeCategory/:id", verifyToken, CategoriesControllerShop.Active);
-router.get(
-  "/findCatByDepartments/:id",
-  CategoriesControllerShop.FindByDepartment
-);
-
 /** PRODUCTS SHOP */
 router.get("/products/:page/:find/:name", ProductControllerShop.Show);
 router.get(
@@ -129,12 +96,7 @@ router.get(
 );
 router.get("/findProducts", ProductControllerShop.FindProducts);
 router.get("/findDependents", ProductControllerShop.FindAllDependets);
-router.post(
-  "/products",
-  multer(uploaderConfig.img).single("thumbnail"),
-  verifyToken,
-  ProductControllerShop.Store
-);
+router.post("/products", verifyToken, ProductControllerShop.Store);
 router.put(
   "/productChangeImage/:id",
   multer(uploaderConfig.img).single("thumbnail"),
@@ -154,28 +116,6 @@ router.put(
   verifyToken,
   ProductControllerShop.UpdateInfoAndList
 );
-
-/** SIZES SHOP */
-router.get("/sizes", SizesControllerShop.Show);
-router.get("/sizeByProduct/:id", SizesControllerShop.ShowByProduct);
-router.post("/sizes", verifyToken, SizesControllerShop.Store);
-router.put("/sizes/:id", verifyToken, SizesControllerShop.Update);
-router.delete("/sizes/:id", verifyToken, SizesControllerShop.Remove);
-router.get("/sizeDependets/:product", SizesControllerShop.FindDependents);
-router.get("/findSize/:color", SizesControllerShop.Find);
-router.get("/findSizeByProduct/:product", SizesControllerShop.FindByProducts);
-
-/** IMAGES COLORS SHOP */
-router.get("/imageColors", ImageColorsController.Show);
-router.post(
-  "/imageColors",
-  multer(uploaderConfig.img).single("image"),
-  verifyToken,
-  ImageColorsController.Store
-);
-router.get("/imagesDependets/:product", ImageColorsController.FindDependents);
-router.delete("/imageColors/:id", verifyToken, ImageColorsController.Remove);
-router.get("/findImages/:id", ImageColorsController.Find);
 
 /** DETALHES DO PRODUTO SHOP */
 router.get("/details/:product", DetailsControllerShop.Find);
@@ -295,17 +235,6 @@ router.put(
   verifyToken,
   TagsController.UpdateBanner
 );
-
-/** SUB-CATEGORIES */
-router.post("/subCat", verifyToken, SubCatController.Store);
-router.get("/subCat/:category", SubCatController.Find);
-router.get("/findSubCat", SubCatController.Show);
-router.get(
-  "/subCatPagination/:page/:text",
-  SubCatController.ShowWithPagination
-);
-router.put("/activeSubCat/:id", verifyToken, SubCatController.Active);
-router.put("/subCat/:id", verifyToken, SubCatController.Edit);
 
 /** ORDERS */
 router.post("/order", verifyToken, OrderControllerShop.Store);

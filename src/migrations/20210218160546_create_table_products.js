@@ -2,16 +2,6 @@ exports.up = function (knex) {
   return knex.schema.createTable("products", function (table) {
     table.increments("id");
     table.string("identify");
-    table
-      .integer("departments_id")
-      .references("departments.id")
-      .notNullable()
-      .onDelete("CASCADE");
-    table
-      .integer("categories_id")
-      .references("categories.id")
-      .notNullable()
-      .onDelete("CASCADE");
     table.string("name").notNullable().unique();
     table.string("description").notNullable();
     table.string("provider_code");
@@ -48,15 +38,7 @@ exports.up = function (knex) {
     table.decimal("promotional_value", 8, 2);
     table.decimal("promotional_rate", 8, 2);
     table.string("thumbnail");
-    table.enu("code_freight", ["04014", "04510", "40290"]);
-    table.decimal("freight_weight", 5, 2);
-    table.decimal("freight_width", 5, 2);
-    table.decimal("freight_height", 5, 2);
-    table.decimal("freight_diameter", 5, 2);
-    table.decimal("freight_length", 5, 2);
-    table.enu("freight_format", ["1", "2", "3"]);
-    table.string("information").notNullable();
-    table.json("list");
+    table.integer("stock").notNullable();
     table.timestamp("created_at").defaultTo(knex.fn.now());
     table.timestamp("updated_at").defaultTo(knex.fn.now());
   });

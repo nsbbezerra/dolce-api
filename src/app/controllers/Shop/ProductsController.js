@@ -61,17 +61,11 @@ const products_config = [
   "products.active",
   "products.information",
   "products.list",
-  "departments.name as dep_name",
-  "categories.name as cat_name",
-  "departments.id as dep_id",
-  "categories.id as cat_id",
 ];
 
 module.exports = {
   async Store(req, res) {
     const {
-      departments_id,
-      categories_id,
       name,
       description,
       sku,
@@ -99,17 +93,7 @@ module.exports = {
       cost_value,
       other_cost,
       sale_value,
-      code_freight,
-      freight_weight,
-      freight_width,
-      freight_height,
-      freight_diameter,
-      freight_length,
-      freight_format,
       provider,
-      information,
-      list,
-      sub_cat_id,
       handle,
       id_to_del,
       icms_base_calc,
@@ -118,13 +102,11 @@ module.exports = {
       fcp_st_base_calc,
       pis_base_calc,
       cofins_base_calc,
+      stock,
     } = req.body;
-    const { filename } = req.file;
-    console.log("HANDLE", handle, id_to_del);
+
     try {
       await knex("products").insert({
-        departments_id,
-        categories_id,
         name,
         identify: uniqid(),
         description,
@@ -153,24 +135,14 @@ module.exports = {
         cost_value,
         other_cost,
         sale_value,
-        code_freight,
-        freight_weight,
-        freight_width,
-        freight_height,
-        freight_diameter,
-        freight_length,
-        freight_format,
-        thumbnail: filename,
         providers_id: provider,
-        information,
-        list: list,
-        sub_cat_id,
         icms_base_calc,
         imcs_st_base_calc,
         fcp_base_calc,
         fcp_st_base_calc,
         pis_base_calc,
         cofins_base_calc,
+        stock,
       });
       if (handle === "on") {
         await knex("tempProducts").where({ id: id_to_del }).del();
@@ -196,16 +168,12 @@ module.exports = {
         const products = await knex
           .select(products_config)
           .from("products")
-          .where("products.active", true)
-          .innerJoin("departments", "departments.id", "products.departments_id")
-          .innerJoin("categories", "categories.id", "products.categories_id")
+          .where("active", true)
           .orderBy("name")
           .limit(10)
           .offset((pageInt - 1) * 10);
 
-        const [count] = await knex("products")
-          .where("products.active", true)
-          .count();
+        const [count] = await knex("products").where("active", true).count();
 
         return res.status(201).json({ products, count });
       }
@@ -213,16 +181,12 @@ module.exports = {
         const products = await knex
           .select(products_config)
           .from("products")
-          .where("products.active", false)
-          .innerJoin("departments", "departments.id", "products.departments_id")
-          .innerJoin("categories", "categories.id", "products.categories_id")
+          .where("active", false)
           .orderBy("name")
           .limit(10)
           .offset((pageInt - 1) * 10);
 
-        const [count] = await knex("products")
-          .where("products.active", false)
-          .count();
+        const [count] = await knex("products").where("active", false).count();
 
         return res.status(201).json({ products, count });
       }
@@ -231,8 +195,6 @@ module.exports = {
           .select(products_config)
           .from("products")
           .where("promotional", true)
-          .innerJoin("departments", "departments.id", "products.departments_id")
-          .innerJoin("categories", "categories.id", "products.categories_id")
           .orderBy("name")
           .limit(10)
           .offset((pageInt - 1) * 10);
@@ -247,8 +209,6 @@ module.exports = {
         const products = await knex
           .select(products_config)
           .from("products")
-          .innerJoin("departments", "departments.id", "products.departments_id")
-          .innerJoin("categories", "categories.id", "products.categories_id")
           .orderBy("name")
           .limit(10)
           .offset((pageInt - 1) * 10);
@@ -262,12 +222,6 @@ module.exports = {
           const products = await knex
             .select(products_config)
             .from("products")
-            .innerJoin(
-              "departments",
-              "departments.id",
-              "products.departments_id"
-            )
-            .innerJoin("categories", "categories.id", "products.categories_id")
             .orderBy("name")
             .limit(10)
             .offset((pageInt - 1) * 10);
@@ -279,19 +233,13 @@ module.exports = {
           const products = await knex
             .select(products_config)
             .from("products")
-            .where("products.name", "like", `%${name}%`)
-            .innerJoin(
-              "departments",
-              "departments.id",
-              "products.departments_id"
-            )
-            .innerJoin("categories", "categories.id", "products.categories_id")
+            .where("name", "like", `%${name}%`)
             .orderBy("name")
             .limit(10)
             .offset((pageInt - 1) * 10);
 
           const [count] = await knex("products")
-            .where("products.name", "like", `%${name}%`)
+            .where("name", "like", `%${name}%`)
             .count();
 
           return res.status(201).json({ products, count });
@@ -356,15 +304,13 @@ module.exports = {
         const products = await knex
           .select(products_config)
           .from("products")
-          .where("products.name", "like", `%${name}%`)
-          .innerJoin("departments", "departments.id", "products.departments_id")
-          .innerJoin("categories", "categories.id", "products.categories_id")
-          .orderBy("products.name")
+          .where("name", "like", `%${name}%`)
+          .orderBy("name")
           .limit(10)
           .offset((pageInt - 1) * 10);
 
         const [count] = await knex("products")
-          .where("products.name", "like", `%${name}%`)
+          .where("name", "like", `%${name}%`)
           .count();
 
         return res.status(201).json({ products, count });
@@ -373,15 +319,13 @@ module.exports = {
         const products = await knex
           .select(products_config)
           .from("products")
-          .where("products.sku", "like", `%${sku}%`)
-          .innerJoin("departments", "departments.id", "products.departments_id")
-          .innerJoin("categories", "categories.id", "products.categories_id")
-          .orderBy("products.name")
+          .where("sku", "like", `%${sku}%`)
+          .orderBy("name")
           .limit(10)
           .offset((pageInt - 1) * 10);
 
         const [count] = await knex("products")
-          .where("products.sku", "like", `%${sku}%`)
+          .where("sku", "like", `%${sku}%`)
           .count();
 
         return res.status(201).json({ products, count });
@@ -390,15 +334,13 @@ module.exports = {
         const products = await knex
           .select(products_config)
           .from("products")
-          .where("products.barcode", "like", `%${barcode}%`)
-          .innerJoin("departments", "departments.id", "products.departments_id")
-          .innerJoin("categories", "categories.id", "products.categories_id")
-          .orderBy("products.name")
+          .where("barcode", "like", `%${barcode}%`)
+          .orderBy("name")
           .limit(10)
           .offset((pageInt - 1) * 10);
 
         const [count] = await knex("products")
-          .where("products.barcode", "like", `%${barcode}%`)
+          .where("barcode", "like", `%${barcode}%`)
           .count();
 
         return res.status(201).json({ products, count });
@@ -407,10 +349,8 @@ module.exports = {
       const products = await knex
         .select(products_config)
         .from("products")
-        .where("products.active", true)
-        .innerJoin("departments", "departments.id", "products.departments_id")
-        .innerJoin("categories", "categories.id", "products.categories_id")
-        .orderBy("products.name")
+        .where("active", true)
+        .orderBy("name")
         .limit(10)
         .offset((pageInt - 1) * 10);
 
@@ -509,19 +449,13 @@ module.exports = {
       cost_value,
       other_cost,
       sale_value,
-      code_freight,
-      freight_weight,
-      freight_width,
-      freight_height,
-      freight_diameter,
-      freight_length,
       icms_base_calc,
       imcs_st_base_calc,
       fcp_base_calc,
       fcp_st_base_calc,
       pis_base_calc,
       cofins_base_calc,
-      freight_format,
+      stock,
     } = req.body;
 
     try {
@@ -555,19 +489,13 @@ module.exports = {
           cost_value,
           other_cost,
           sale_value,
-          code_freight,
-          freight_weight,
-          freight_width,
-          freight_height,
-          freight_diameter,
-          freight_length,
           icms_base_calc,
           imcs_st_base_calc,
           fcp_base_calc,
           fcp_st_base_calc,
           pis_base_calc,
           cofins_base_calc,
-          freight_format,
+          stock,
         })
         .returning("*");
       return res
@@ -587,8 +515,6 @@ module.exports = {
       const products = await knex
         .select(products_config)
         .from("products")
-        .innerJoin("departments", "departments.id", "products.departments_id")
-        .innerJoin("categories", "categories.id", "products.categories_id")
         .orderBy("name");
 
       return res.status(200).json(products);
@@ -671,13 +597,13 @@ module.exports = {
     const { amount } = req.body;
 
     try {
-      const size = await knex("sizes")
-        .where({ products_id: id })
-        .update({ amount })
+      const product = await knex("products")
+        .where({ id: id })
+        .update({ stock: amount })
         .returning("*");
       return res
         .status(201)
-        .json({ message: "Alteração concluída com sucesso", size });
+        .json({ message: "Alteração concluída com sucesso", product });
     } catch (error) {
       const errorMessage = error.message;
       return res.status(400).json({
