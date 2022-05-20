@@ -3,8 +3,17 @@ const bycrypt = require("bcrypt");
 
 module.exports = {
   async Store(req, res) {
-    const { name, gender, cpf, email, contact, user, password } = req.body;
-    const hash = await bycrypt.hash(password, 10);
+    const {
+      name,
+      gender,
+      cpf,
+      email,
+      contact,
+      type,
+      socialName,
+      stateRegistration,
+      municipalRegistration,
+    } = req.body;
     try {
       const [id] = await knex("clients")
         .insert({
@@ -13,8 +22,10 @@ module.exports = {
           cpf,
           email,
           contact,
-          user,
-          password: hash,
+          type,
+          socialName,
+          stateRegistration,
+          municipalRegistration,
         })
         .returning("id");
       return res
@@ -39,7 +50,10 @@ module.exports = {
           "email",
           "contact",
           "cpf",
-          "user",
+          "type",
+          "socialName",
+          "stateRegistration",
+          "municipalRegistration",
           "active",
           "restrict"
         )
@@ -64,7 +78,10 @@ module.exports = {
           "clients.email",
           "clients.contact",
           "clients.cpf",
-          "clients.user",
+          "clients.type",
+          "clients.socialName",
+          "clients.stateRegistration",
+          "clients.municipalRegistration",
           "clients.active",
           "clients.restrict",
           "addresses.id as addresses_id",
@@ -91,12 +108,31 @@ module.exports = {
 
   async Update(req, res) {
     const { id } = req.params;
-    const { name, gender, cpf, email, contact, user, password } = req.body;
-    const hash = await bycrypt.hash(password, 10);
+    const {
+      name,
+      gender,
+      cpf,
+      email,
+      contact,
+      type,
+      socialName,
+      stateRegistration,
+      municipalRegistration,
+    } = req.body;
     try {
       const client = await knex("clients")
         .where({ id: id })
-        .update({ name, gender, cpf, email, contact, user, password: hash })
+        .update({
+          name,
+          gender,
+          cpf,
+          email,
+          contact,
+          type,
+          socialName,
+          stateRegistration,
+          municipalRegistration,
+        })
         .returning("*");
       return res
         .status(201)

@@ -2,11 +2,13 @@ exports.up = function (knex) {
   return knex.schema.createTable("clients", function (table) {
     table.increments("id");
     table.string("name").notNullable();
-    table.enu("gender", ["masc", "fem"]).notNullable();
+    table.enu("gender", ["masc", "fem"]);
+    table.enu("type", ["company", "person"]).notNullable();
     table.string("cpf").notNullable().unique();
-    table.string("email").unique();
-    table.string("user").unique().notNullable();
-    table.string("password").notNullable();
+    table.string("email");
+    table.string("socialName");
+    table.string("stateRegistration");
+    table.string("municipalRegistration");
     table.string("contact").notNullable();
     table.boolean("active").notNullable().defaultTo(true);
     table.boolean("restrict").notNullable().defaultTo(false);

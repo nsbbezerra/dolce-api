@@ -15,7 +15,6 @@ module.exports = {
   async Store(req, res) {
     const { bank, mode, agency, account, variation, operation, amount } =
       req.body;
-    const { filename } = req.file;
     try {
       await knex("bankAccount").insert({
         bank,
@@ -25,7 +24,6 @@ module.exports = {
         variation,
         operation,
         amount,
-        thumbnail: filename,
       });
       return res
         .status(201)

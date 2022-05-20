@@ -53,12 +53,7 @@ router.put("/address/:id", verifyToken, AddressesController.Edit); //Editar um E
 router.delete("/address/:id", verifyToken, AddressesController.Remove); //Remover um Endereço
 
 /** ROTAS PARA AS CONTAS BANCARIAS */
-router.post(
-  "/accountbank",
-  multer(uploaderConfig.img).single("thumbnail"),
-  verifyToken,
-  BankAccountController.Store
-);
+router.post("/accountbank", verifyToken, BankAccountController.Store);
 router.get("/accountbank", BankAccountController.Show);
 router.put("/accountbank/:id", verifyToken, BankAccountController.Update);
 router.put("/activebankaccount/:id", verifyToken, BankAccountController.Active);

@@ -11,7 +11,6 @@ exports.up = function (knex) {
 
 exports.down = function (knex) {
   return knex.schema.alterTable("products", function (table) {
-    table.dropColumn("freight_format");
     table.dropColumn("icms_base_calc");
     table.dropColumn("imcs_st_base_calc");
     table.dropColumn("fcp_base_calc");
